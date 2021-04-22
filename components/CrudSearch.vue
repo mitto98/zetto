@@ -11,7 +11,7 @@
       </b-btn>
     </b-col> -->
 
-    <table class="min-w-full divide-y divide-gray-200">
+    <table class="table min-w-full divide-y divide-gray-200">
       <thead class="bg-gray-50">
         <tr>
           <th
