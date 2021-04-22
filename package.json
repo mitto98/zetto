@@ -1,0 +1,23 @@
+{
+  "name": "zetto",
+  "version": "0.0.1",
+  "description": "A pragmatic crud component headless interface",
+  "author": "Mattia Dapino <mattia.dapino@hey.com>",
+  "license": "MIT",
+  "main": "./index.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "peerDependencies": {
+    "@manydesigns/portofino": "^1.x",
+    "vue": "2.x"
+  },
+  "dependencies": {
+    "@braid/vue-formulate": "^2.5.2",
+    "lodash": "^4.17.21"
+  },
+  "devDependencies": {
+  }
+}
