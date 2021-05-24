@@ -1,5 +1,5 @@
 const path = require('path');
-const vuePlugin = require('@vitejs/plugin-vue');
+const {createVuePlugin} = require('vite-plugin-vue2');
 
 module.exports = {
   resolve: {
@@ -10,7 +10,7 @@ module.exports = {
       },
     ],
   },
-  plugins: [vuePlugin()],
+  plugins: [createVuePlugin()],
   build: {
     lib: {
       entry: path.resolve(__dirname, 'src/index.js'),

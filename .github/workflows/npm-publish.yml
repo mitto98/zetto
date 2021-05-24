@@ -2,7 +2,7 @@ name: Build and publish
 
 on:
   push:
-    branches: [master]
+    branches: [main]
 
 jobs:
   publish-npm:
@@ -22,10 +22,10 @@ jobs:
             ${{ runner.os }}-node-
 
       - name: Install dependencies
-        run: yarn install --frozen-lockfile --non-interactive
+        run: npm ci
 
       - name: Build project
-        run: yarn run build
+        run: npm run build
 
       - uses: JS-DevTools/npm-publish@v1
         with:

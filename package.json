@@ -1,6 +1,6 @@
 {
   "name": "zetto",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A pragmatic crud component headless interface",
   "author": "Mattia Dapino <mattia.dapino@hey.com>",
   "license": "MIT",
@@ -10,18 +10,19 @@
     ".": {
       "import": "./dist/zetto.es.js",
       "require": "./dist/zetto.umd.js"
-    }
+    },
+    "./nuxt": "./nuxt/index.js"
   },
   "scripts": {
     "build": "vite build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "peerDependencies": {
-    "@braid/vue-formulate": "^2.5",
-    "@manydesigns/portofino": "^1.x",
-    "vue": "2.x"
+    "vue": "^2.6"
   },
   "dependencies": {
+    "@braid/vue-formulate": "^2.5.2",
+    "@manydesigns/portofino": "^1.x",
     "lodash": "^4.17.21"
   },
   "devDependencies": {
