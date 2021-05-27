@@ -1,17 +1,19 @@
-// import Vue from 'vue'
 // import VueFormulate from '@braid/vue-formulate'
 import * as components from './components';
+import defaultConfig from './defaultConfig';
+import { mergeDeep } from './utils/utils';
 
 // Vue.use(VueFormulate)
 
-
 // install function executed by Vue.use()
-export default function installCavolacci(Vue) {
+export default function installZetto(Vue, options) {
+  Vue.prototype.$zetto = {
+    options: mergeDeep(defaultConfig, options),
+  };
+
   Object.entries(components).forEach(([componentName, component]) => {
     Vue.component(componentName, component);
   });
-};
+}
 
-// To allow individual component use, export components
-// each can be registered via Vue.component()
-export * from './components';
+// export * from './components';

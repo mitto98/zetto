@@ -1,6 +1,6 @@
 {
   "name": "zetto",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "A pragmatic crud component headless interface",
   "author": "Mattia Dapino <mattia.dapino@hey.com>",
   "license": "MIT",

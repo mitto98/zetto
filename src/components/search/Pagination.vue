@@ -1,26 +1,25 @@
 <template>
   <nav>
-    {{ pagesArray }}
-    <ul class="pagination justify-content-end">
-      <li class="page-item">
-        <a class="page-link" href="#" aria-label="Precedente">
+    <ul :class="classes.ul">
+      <li :class="`${classes.li} ${classes.first}`">
+        <button :class="classes.button" href="#" aria-label="Precedente">
           <span aria-hidden="true">&laquo;</span>
           <span class="sr-only">Precedente</span>
-        </a>
+        </button>
       </li>
       <li
         v-for="p in pagesArray"
         :key="p"
-        :class="`${'page-item'} ${p === value ? 'active' : ''}`"
+        :class="`${classes.li} ${p === value ? classes.active : ''}`"
         @click="$emit('input', p)"
       >
-        <a class="page-link" href="#">{{ p + 1 }}</a>
+        <button :class="classes.button" href="#">{{ p + 1 }}</button>
       </li>
-      <li class="page-item">
-        <a class="page-link" href="#" aria-label="Successivo">
+      <li :class="`${classes.li} ${classes.last}`">
+        <button :class="classes.button" href="#" aria-label="Successivo">
           <span aria-hidden="true">&raquo;</span>
           <span class="sr-only">Successivo</span>
-        </a>
+        </button>
       </li>
     </ul>
   </nav>
@@ -34,6 +33,9 @@ export default {
     perPage: { type: Number, default: 10 },
   },
   computed: {
+    classes() {
+      return this.$zetto.options.classes.search.pagination;
+    },
     numberOfPages() {
       const result = this.totalRows / this.perPage;
       return result < 1 ? 1 : result;

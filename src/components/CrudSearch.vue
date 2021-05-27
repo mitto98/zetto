@@ -1,6 +1,7 @@
 <template>
   <div>
-    <!-- <b-col md="6">
+    <!-- 
+    <b-col md="6">
       <search-input-field v-if="searchField" v-model="search" class="mb-2"/>
     </b-col>
 
@@ -9,22 +10,16 @@
         <b-icon icon="plus"/>
         {{ createLabel || action.config.createTitle }}
       </b-btn>
-    </b-col> -->
+    </b-col> 
+    -->
 
-    <table class="table min-w-full divide-y divide-gray-200">
-      <thead class="bg-gray-50">
+    <table :class="classes.table">
+      <thead :class="classes.tableHead">
         <tr>
           <th
             v-for="field in tableFields"
             :key="field.name"
-            class="
-              px-6
-              py-3
-              text-left text-xs
-              font-medium
-              text-gray-500
-              tracking-wider
-            "
+            :class="classes.tableHeadCell"
           >
             <slot :name="`head(${field.name})`">
               {{ field.label }}
@@ -65,7 +60,7 @@
           <td
             v-for="field in tableFields"
             :key="field.name"
-            class="px-6 py-4 whitespace-nowrap"
+            :class="classes.tableBodyCell"
           >
             <slot
               :name="`cell(${field.name})`"
@@ -127,7 +122,6 @@ export default {
     loading: false,
     items: [],
     currentPage: 1,
-    pageSize: null,
     search: '',
     error: '',
   }),
@@ -148,6 +142,9 @@ export default {
     },
   },
   computed: {
+    classes() {
+      return this.$zetto.options.classes.search;
+    },
     pageSize() {
       if (!this.action) return 0;
       return this.action.config.rowsPerPage || 10;
