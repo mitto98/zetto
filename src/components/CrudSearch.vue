@@ -17,7 +17,14 @@
           <th
             v-for="field in tableFields"
             :key="field.name"
-            class="px-6 py-3 text-left text-xs font-medium text-gray-500 tracking-wider"
+            class="
+              px-6
+              py-3
+              text-left text-xs
+              font-medium
+              text-gray-500
+              tracking-wider
+            "
           >
             <slot :name="`head(${field.name})`">
               {{ field.label }}
@@ -26,7 +33,35 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="item in items" :key="item.key">
+        <tr v-if="error">
+          <td :colspan="tableFields.length">
+            <slot name="error">
+              <table-error :message="error" />
+            </slot>
+          </td>
+        </tr>
+
+        <tr v-else-if="loading">
+          <td :colspan="tableFields.length">
+            <slot name="busy">
+              <div style="padding: 20px 0; text-align: center">
+                Caricamento...
+              </div>
+            </slot>
+          </td>
+        </tr>
+
+        <tr v-else-if="!items.length">
+          <td :colspan="tableFields.length">
+            <slot name="busy">
+              <div style="padding: 20px 0; text-align: center">
+                Nessun risultato
+              </div>
+            </slot>
+          </td>
+        </tr>
+
+        <tr v-else v-for="item in items" :key="item.key">
           <td
             v-for="field in tableFields"
             :key="field.name"
@@ -44,23 +79,22 @@
       </tbody>
     </table>
 
-    <!--
-      <b-table striped hover show-empty responsive
-               :busy="$fetchState.pending"
-               :fields="tableFields"
-               :items="items"
-               v-bind="$attrs"
-               empty-text="Nessun risultato trovato">
-        <template v-for="(_, name) in $scopedSlots" :slot="name" slot-scope="slotData">
-          <slot :name="name" v-bind="slotData"/>
-        </template>
-        <template v-slot:cell()="{item, field}">
-          <span>{{ item.getDisplayValue(field.key) }}</span>
-        </template>
-      </b-table>
+    <pagination
+      v-if="action.totalRecords > action.config.rowsPerPage"
+      v-model="currentPage"
+      :total-rows="action.totalRecords"
+      :per-page="action.config.rowsPerPage"
+      :disabled="loading"
+    />
 
+    <!-- 
+    <button @click="loading = !loading">Toggle loading</button> &nbsp;
+    <button @click="error = error ? null : 'Errore generico'">
+      Toggle error
+    </button> 
+    -->
+    <!--
       <b-pagination v-if="action.totalRecords > action.config.rowsPerPage"
-                    v-model="currentPage"
                     :total-rows="action.totalRecords"
                     :per-page="action.config.rowsPerPage"
                     :disabled="$fetchState.pending"
@@ -70,13 +104,15 @@
 </template>
 
 <script>
-import { cloneDeep, debounce, isFunction, uniqBy } from 'lodash';
+import { cloneDeep, debounce } from 'lodash';
 import { mergeComponentFields } from '../utils/dataMapper';
-// import SearchInputField from '~/components/crud-pages/SearchInputField';
+import { lazyPromise } from '../utils/utils';
+import TableError from './fragments/TableError.vue';
+import Pagination from './search/Pagination.vue';
 
 export default {
   name: 'CrudSearch',
-  // components: {SearchInputField},
+  components: { TableError, Pagination },
   props: {
     action: { type: Object, required: true },
     fields: { type: Object, default: () => ({}) },
@@ -88,28 +124,34 @@ export default {
     trigger: { type: Number },
   },
   data: () => ({
+    loading: false,
     items: [],
     currentPage: 1,
+    pageSize: null,
     search: '',
+    error: '',
   }),
 
-  fetchDelay: 300,
-  async fetch() {
-    await this.fetchData();
+  created() {
+    this.fetchData();
   },
 
   watch: {
     trigger() {
-      this.$fetch();
+      this.fetchData();
     },
     search: debounce(function () {
-      this.$fetch();
+      this.fetchData();
     }, 300),
     currentPage() {
-      this.$fetch();
+      this.fetchData();
     },
   },
   computed: {
+    pageSize() {
+      if (!this.action) return 0;
+      return this.action.config.rowsPerPage || 10;
+    },
     tableFields() {
       if (!this.action) return [];
 
@@ -121,14 +163,19 @@ export default {
   },
   methods: {
     async fetchData() {
+      this.loading = true;
       const filters = this.filters ? cloneDeep(this.filters) : {};
       if (this.searchField) filters[this.searchField] = this.search;
 
-      this.items = await this.action.search({
-        page: this.currentPage,
-        filters,
-        sort: this.sort,
-      });
+      this.items = await lazyPromise(
+        this.action.search({
+          page: this.currentPage,
+          filters,
+          sort: this.sort,
+        })
+      );
+
+      this.loading = false;
     },
   },
 };

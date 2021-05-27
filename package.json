@@ -1,6 +1,6 @@
 {
   "name": "zetto",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "A pragmatic crud component headless interface",
   "author": "Mattia Dapino <mattia.dapino@hey.com>",
   "license": "MIT",
@@ -14,6 +14,7 @@
     "./nuxt": "./nuxt/index.js"
   },
   "scripts": {
+    "dev": "vite build --watch",
     "build": "vite build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
