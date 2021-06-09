@@ -1,8 +1,8 @@
 <template>
-  <table class="align-left">
-    <tr v-for="field in tableFields" :key="field.name">
-      <td class="font-bold">{{ field.label }}:&nbsp;</td>
-      <td v-if="value">
+  <dl>
+    <div v-for="field in tableFields" :key="field.name">
+      <dt>{{ field.label }}</dt>
+      <dd v-if="value">
         <slot
           :name="`data(${field.name})`"
           :value="value[field.name]"
@@ -10,16 +10,19 @@
         >
           {{ value.getDisplayValue(field.name) }}
         </slot>
-      </td>
-    </tr>
-  </table>
+      </dd>
+    </div>
+  </dl>
 </template>
 
 <script>
+// import actionBased from '../mixins/actionBased';
+
 export default {
   name: 'CrudDetail',
+  //mixins: { actionBased },
   props: {
-    action: { type: Object, required: true },
+    action: { type: [Object, String], required: true },
     fields: { type: Array, default: null },
     id: { required: true },
   },

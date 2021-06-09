@@ -1,18 +1,5 @@
 <template>
   <div>
-    <!-- 
-    <b-col md="6">
-      <search-input-field v-if="searchField" v-model="search" class="mb-2"/>
-    </b-col>
-
-    <b-col v-if="createPage" offset-md="3" md="3" class="pb-2">
-      <b-btn variant="primary" :to="createPage" block>
-        <b-icon icon="plus"/>
-        {{ createLabel || action.config.createTitle }}
-      </b-btn>
-    </b-col> 
-    -->
-
     <table :class="classes.table">
       <thead :class="classes.tableHead">
         <tr>
@@ -21,7 +8,7 @@
             :key="field.name"
             :class="classes.tableHeadCell"
           >
-            <slot :name="`head(${field.name})`">
+            <slot :name="`head(${field.name})`" :field="field">
               {{ field.label }}
             </slot>
           </th>
@@ -57,7 +44,11 @@
         </tr>
 
         <tr v-else v-for="item in items" :key="item.key">
+          <td v-if="$scopedSlots.row" :colspan="tableFields.length">
+            <slot name="row" :item="item" />
+          </td>
           <td
+            v-else
             v-for="field in tableFields"
             :key="field.name"
             :class="classes.tableBodyCell"
@@ -75,31 +66,18 @@
     </table>
 
     <pagination
-      v-if="action.totalRecords > action.config.rowsPerPage"
+      v-if="action.totalRecords > pageSize"
       v-model="currentPage"
       :total-rows="action.totalRecords"
-      :per-page="action.config.rowsPerPage"
+      :per-page="pageSize"
       :disabled="loading"
     />
-
-    <!-- 
-    <button @click="loading = !loading">Toggle loading</button> &nbsp;
-    <button @click="error = error ? null : 'Errore generico'">
-      Toggle error
-    </button> 
-    -->
-    <!--
-      <b-pagination v-if="action.totalRecords > action.config.rowsPerPage"
-                    :total-rows="action.totalRecords"
-                    :per-page="action.config.rowsPerPage"
-                    :disabled="$fetchState.pending"
-                    align="right"/>
-     -->
   </div>
 </template>
 
 <script>
 import { cloneDeep, debounce } from 'lodash';
+import classed from '../mixins/classed';
 import { mergeComponentFields } from '../utils/dataMapper';
 import { lazyPromise } from '../utils/utils';
 import TableError from './fragments/TableError.vue';
@@ -108,6 +86,7 @@ import Pagination from './search/Pagination.vue';
 export default {
   name: 'CrudSearch',
   components: { TableError, Pagination },
+  mixins: [classed('search')],
   props: {
     action: { type: Object, required: true },
     fields: { type: Object, default: () => ({}) },
@@ -142,9 +121,6 @@ export default {
     },
   },
   computed: {
-    classes() {
-      return this.$zetto.options.classes.search;
-    },
     pageSize() {
       if (!this.action) return 0;
       return this.action.config.rowsPerPage || 10;

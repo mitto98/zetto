@@ -15,7 +15,7 @@ export default {
   props: {
     action: { type: Object, required: true },
     fields: { type: Object, default: () => ({}) },
-    submitLabel: { type: String, required: true },
+    submitLabel: { type: String },
   },
   data: () => ({
     isLoading: false,
@@ -24,7 +24,6 @@ export default {
   computed: {
     schema() {
       if (!this.action) return [];
-
       const fields = mergeComponentFields(
         this.action.getInsertableAttributes(),
         this.fields
@@ -35,7 +34,7 @@ export default {
 
       fields.push({
         type: 'submit',
-        label: this.submitLabel,
+        label: this.submitLabel || 'Crea nuovo',
       });
 
       return fields;
