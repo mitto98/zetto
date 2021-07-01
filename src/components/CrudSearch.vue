@@ -78,8 +78,8 @@
 <script>
 import { cloneDeep, debounce } from 'lodash';
 import classed from '../mixins/classed';
-import { mergeComponentFields } from '../utils/dataMapper';
-import { lazyPromise } from '../utils/utils';
+import { mergeComponentFields } from '../utils/dataMapper.ts';
+import { lazyPromise } from '../utils/utils.ts';
 import TableError from './fragments/TableError.vue';
 import Pagination from './search/Pagination.vue';
 

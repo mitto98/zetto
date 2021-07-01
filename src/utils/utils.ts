@@ -1,6 +1,6 @@
 import { merge } from 'lodash';
 
-export async function lazyPromise(promise) {
+export async function lazyPromise<T>(promise: Promise<T>): Promise<T> {
   const [res] = await Promise.all([
     promise,
     new Promise((res) => setTimeout(res, 300)),
@@ -8,6 +8,6 @@ export async function lazyPromise(promise) {
   return res;
 }
 
-export function mergeDeep(source, update) {
+export function mergeDeep(source: any, update: any): any {
   return merge(source, update);
 }

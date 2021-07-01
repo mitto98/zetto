@@ -12,6 +12,7 @@ module.exports = {
   },
   plugins: [createVuePlugin()],
   build: {
+    sourcemap: true,
     lib: {
       entry: path.resolve(__dirname, 'src/index.js'),
       name: 'Zetto',

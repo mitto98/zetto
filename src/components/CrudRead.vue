@@ -16,6 +16,7 @@
 </template>
 
 <script>
+import { mergeComponentFields } from '../utils/dataMapper.ts';
 // import actionBased from '../mixins/actionBased';
 
 export default {
@@ -39,11 +40,10 @@ export default {
     tableFields() {
       if (!this.action) return [];
 
-      let attrs = this.action.getAttributes();
-      if (this.fields)
-        attrs = attrs.filter((a) => this.fields.includes(a.name));
-
-      return attrs;
+      return mergeComponentFields(
+        this.action.getSummaryAttributes(),
+        this.fields
+      );
     },
   },
 };

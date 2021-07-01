@@ -1,6 +1,6 @@
 {
   "name": "zetto",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "A pragmatic crud component headless interface",
   "author": "Mattia Dapino <mattia.dapino@hey.com>",
   "license": "MIT",
@@ -14,8 +14,9 @@
     "./nuxt": "./nuxt/index.js"
   },
   "scripts": {
-    "dev": "vite build --watch",
+    "dev": "vite build --watch -m development",
     "build": "vite build",
+    "test:typing": "tsc --noEmit",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "peerDependencies": {
@@ -27,6 +28,8 @@
     "lodash": "^4.17"
   },
   "devDependencies": {
+    "@types/lodash": "^4.14.170",
+    "typescript": "^4.3.4",
     "vite": "^2.2.3",
     "vite-plugin-vue2": "^1.5.1"
   }

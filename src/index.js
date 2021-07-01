@@ -1,7 +1,7 @@
 // import VueFormulate from '@braid/vue-formulate'
 import * as components from './components';
 import defaultConfig from './defaultConfig';
-import { mergeDeep } from './utils/utils';
+import { mergeDeep } from './utils/utils.ts';
 
 // Vue.use(VueFormulate)
 

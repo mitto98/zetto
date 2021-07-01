@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import { mergeComponentFields } from '../utils/dataMapper';
+import { mergeComponentFields } from '../utils/dataMapper.ts';
 
 export default {
   name: 'CrudCreate',

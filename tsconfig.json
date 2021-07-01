@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "commonjs",
+    "allowJs": true,
+    "checkJs": false,
+    "outDir": "dist",
+    "types": ["vite/client"]
+  },
+  "exclude": ["node_modules", "dist"],
+  "include": ["./src"]
+}
