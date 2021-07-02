@@ -1,12 +1,13 @@
-// import VueFormulate from '@braid/vue-formulate'
 import * as components from './components';
-import defaultConfig from './defaultConfig';
+import defaultConfig from './defaultConfig.ts';
 import { mergeDeep } from './utils/utils.ts';
 
 // Vue.use(VueFormulate)
 
 // install function executed by Vue.use()
 export default function installZetto(Vue, options) {
+  //TODO: Check if vue-formulate is installed
+
   Vue.prototype.$zetto = {
     options: mergeDeep(defaultConfig, options),
   };
@@ -15,5 +16,3 @@ export default function installZetto(Vue, options) {
     Vue.component(componentName, component);
   });
 }
-
-// export * from './components';

@@ -1,5 +1,8 @@
 import Vue from 'vue'
 import Zetto from 'zetto'
+<% if (options.registerFormulate) { %>
+import VueFormulate from '@braid/vue-formulate';
+<% } %>
 
 <% if (options.configPath) { %>
 import options from '<%= options.configPath %>'
@@ -8,7 +11,6 @@ const options = {}
 <% } %>
 
 <% if (options.registerFormulate) { %>
-import VueFormulate from '@braid/vue-formulate';
 Vue.use(VueFormulate, options.formulate);
 <% } %>
 

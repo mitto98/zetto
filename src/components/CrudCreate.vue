@@ -8,6 +8,7 @@
 </template>
 
 <script>
+import { mapPropertyToFormulateField } from '../utils/dataMapper';
 import { mergeComponentFields } from '../utils/dataMapper.ts';
 
 export default {
@@ -27,10 +28,7 @@ export default {
       const fields = mergeComponentFields(
         this.action.getInsertableAttributes(),
         this.fields
-      ).map((att) => ({
-        ...att,
-        type: 'text',
-      }));
+      ).map(mapPropertyToFormulateField);
 
       fields.push({
         type: 'submit',
