@@ -1,6 +1,6 @@
 {
   "name": "zetto",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "A pragmatic crud component headless interface",
   "author": "Mattia Dapino <mattia.dapino@hey.com>",
   "license": "MIT",
@@ -31,7 +31,6 @@
     "@types/lodash": "^4.14.170",
     "typescript": "^4.3.4",
     "vite": "^2.2.3",
-    "vite-plugin-vue2": "^1.5.1",
-    "vue-template-compiler": "^2.6.14"
+    "vite-plugin-vue2": "^1.5.1"
   }
 }

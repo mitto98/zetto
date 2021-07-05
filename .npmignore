@@ -1,2 +1,6 @@
 .github
 src
+
+.prettierrc
+tsconfig.json
+vite.config.js

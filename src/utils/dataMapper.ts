@@ -5,20 +5,22 @@ export function mergeComponentFields(
   fields: Attribute[],
   fieldsConf: AttributesConfig
 ): Attribute[] {
-  fields = fields || [];
+  if (!fields) return [];
 
-  const res: Attribute[] = (fields || []).map((field) => {
-    const fieldConf = fieldsConf[field.name] || {};
+  const res: Attribute[] = fields.map((field) => {
+    const fieldConf = fieldsConf?.[field.name] || {};
     return { ...field, ...fieldConf };
   });
 
-  const addFields: Attribute[] = Object.entries(fieldsConf)
-    .map(([key, val]) => ({ ...val, name: key }))
-    .filter((aField) => !fields.find((f) => f.name === aField.name));
+  if (fieldsConf) {
+    const addFields: Attribute[] = Object.entries(fieldsConf)
+      .map(([key, val]) => ({ ...val, name: key }))
+      .filter((aField) => !fields.find((f) => f.name === aField.name));
 
-  res.push(...addFields);
+    res.push(...addFields);
+  }
 
-  return fields.filter((f) => {
+  return res.filter((f) => {
     if (typeof f.display === 'function') return f.display();
     return f.display !== false;
   });
