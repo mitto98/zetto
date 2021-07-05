@@ -1,12 +1,12 @@
 <template>
   <div>
-    <table :class="classes.table">
-      <thead :class="classes.tableHead">
+    <table :class="cls.table" v-bind="$attrs">
+      <thead v-if="headEnabled" :class="cls.tableHead">
         <tr>
           <th
             v-for="field in tableFields"
             :key="field.name"
-            :class="classes.tableHeadCell"
+            :class="cls.tableHeadCell"
           >
             <slot :name="`head(${field.name})`" :field="field">
               {{ field.label }}
@@ -45,17 +45,18 @@
 
         <tr v-else v-for="item in items" :key="item.key">
           <td v-if="$scopedSlots.row" :colspan="tableFields.length">
-            <slot name="row" :item="item" />
+            <slot name="row" :action="action" :item="item" />
           </td>
           <td
             v-else
             v-for="field in tableFields"
             :key="field.name"
-            :class="classes.tableBodyCell"
+            :class="cls.tableBodyCell"
           >
             <slot
               :name="`cell(${field.name})`"
               :value="item[field.name]"
+              :action="action"
               :item="item"
             >
               {{ item.getDisplayValue(field.name) }}
@@ -77,7 +78,7 @@
 
 <script>
 import { cloneDeep, debounce } from 'lodash';
-import classed from '../mixins/classed';
+import classed, { classedProps } from '../mixins/classedMixin';
 import { mergeComponentFields } from '../utils/dataMapper.ts';
 import { lazyPromise } from '../utils/utils.ts';
 import TableError from './fragments/TableError.vue';
@@ -96,6 +97,8 @@ export default {
     sort: { type: Object },
     filters: { type: Object },
     trigger: { type: Number },
+    headEnabled: { type: Boolean, default: true },
+    ...classedProps,
   },
   data: () => ({
     loading: false,

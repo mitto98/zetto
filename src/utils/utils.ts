@@ -9,5 +9,5 @@ export async function lazyPromise<T>(promise: Promise<T>): Promise<T> {
 }
 
 export function mergeDeep(source: any, update: any): any {
-  return merge(source, update);
+  return merge({}, source, update);
 }
