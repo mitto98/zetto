@@ -78,6 +78,7 @@
 
 <script>
 import { cloneDeep, debounce } from 'lodash';
+import { EVENT_NAME_REFRESH_DATA } from '../constants/events';
 import classed, { classedProps } from '../mixins/classedMixin';
 import { mergeComponentFields } from '../utils/dataMapper.ts';
 import { lazyPromise } from '../utils/utils.ts';
@@ -89,6 +90,7 @@ export default {
   components: { TableError, Pagination },
   mixins: [classed('search')],
   props: {
+    id: { type: String },
     action: { type: Object, required: true },
     fields: { type: Object, default: () => ({}) },
     searchField: { type: String },
@@ -96,7 +98,6 @@ export default {
     createLabel: { type: String },
     sort: { type: Object },
     filters: { type: Object },
-    trigger: { type: Number },
     headEnabled: { type: Boolean, default: true },
     ...classedProps,
   },
@@ -108,14 +109,15 @@ export default {
     error: '',
   }),
 
+  mounted() {
+    this.$root.$on(EVENT_NAME_REFRESH_DATA, this.refreshDataHandler);
+  },
+
   created() {
     this.fetchData();
   },
 
   watch: {
-    trigger() {
-      this.fetchData();
-    },
     search: debounce(function () {
       this.fetchData();
     }, 300),
@@ -138,6 +140,9 @@ export default {
     },
   },
   methods: {
+    async refreshDataHandler(id) {
+      if (this.id && this.id === id) await this.fetchData();
+    },
     async fetchData() {
       this.loading = true;
       const filters = this.filters ? cloneDeep(this.filters) : {};

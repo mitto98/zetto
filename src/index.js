@@ -1,6 +1,5 @@
 import * as components from './components';
-import defaultConfig from './defaultConfig.ts';
-import { mergeDeep } from './utils/utils.ts';
+import ZettoProto from './ZettoVuePrototype';
 
 // Vue.use(VueFormulate)
 
@@ -8,9 +7,21 @@ import { mergeDeep } from './utils/utils.ts';
 export default function installZetto(Vue, options) {
   //TODO: Check if vue-formulate is installed
 
-  Vue.prototype.$zetto = {
-    options: mergeDeep(defaultConfig, options),
-  };
+  Vue.mixin({
+    beforeCreate() {
+      this._zRoot = new ZettoProto(this, options);
+    },
+  });
+
+  if (!Vue.prototype.$zetto) {
+    Object.defineProperty(Vue.prototype, '$zetto', {
+      get() {
+        if (!this || !this._zRoot) console.warn('[Zetto] Cannot access vue VM');
+
+        return this._zRoot;
+      },
+    });
+  }
 
   Object.entries(components).forEach(([componentName, component]) => {
     Vue.component(componentName, component);
