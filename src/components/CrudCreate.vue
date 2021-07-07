@@ -1,5 +1,6 @@
 <template>
   <formulate-form
+    v-if="schema"
     v-model="form"
     :schema="schema"
     @submit="handleSubmit"
@@ -20,25 +21,39 @@ export default {
   },
   data: () => ({
     isLoading: false,
+    schema: null,
     form: {},
   }),
-  computed: {
-    schema() {
+  created() {
+    this.loadSchema();
+  },
+  methods: {
+    async loadSchema() {
       if (!this.action) return [];
       const fields = mergeComponentFields(
         this.action.getInsertableAttributes(),
         this.fields
       ).map(mapPropertyToFormulateField);
 
+      //TODO Custom selection provider
+      for (const field of fields) {
+        const sp = this.action.getSelectionProviderByPropertyName(field.name);
+        if (sp) {
+          field.type = 'select';
+          field.options = (await sp.getOptions()).map((o) => ({
+            value: o.v,
+            label: o.l,
+          }));
+        }
+      }
+
       fields.push({
         type: 'submit',
         label: this.submitLabel || 'Crea nuovo',
       });
 
-      return fields;
+      this.schema = fields;
     },
-  },
-  methods: {
     async handleSubmit() {
       this.isLoading = true;
       const customer = await this.action.create(this.form);
