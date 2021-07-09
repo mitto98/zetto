@@ -2,21 +2,37 @@
   <nav>
     <ul :class="classes.ul">
       <li :class="`${classes.li} ${classes.first}`">
-        <button :class="classes.button" href="#" aria-label="Precedente">
+        <button
+          :class="classes.button"
+          :disabled="value === 1"
+          @click="$emit('input', 1)"
+          aria-label="Precedente"
+        >
           <span aria-hidden="true">&laquo;</span>
           <span class="sr-only">Precedente</span>
         </button>
       </li>
+
       <li
         v-for="p in pagesArray"
         :key="p"
         :class="`${classes.li} ${p === value ? classes.active : ''}`"
-        @click="$emit('input', p)"
       >
-        <button :class="classes.button" href="#">{{ p + 1 }}</button>
+        <button
+          :class="`${classes.button} ${p === value ? classes.active : ''}`"
+          @click="$emit('input', p)"
+        >
+          {{ p }}
+        </button>
       </li>
+
       <li :class="`${classes.li} ${classes.last}`">
-        <button :class="classes.button" href="#" aria-label="Successivo">
+        <button
+          :class="classes.button"
+          :disabled="value === numberOfPages"
+          @click="$emit('input', numberOfPages)"
+          aria-label="Successivo"
+        >
           <span aria-hidden="true">&raquo;</span>
           <span class="sr-only">Successivo</span>
         </button>
@@ -26,9 +42,11 @@
 </template>
 
 <script>
+const NUMBER_OF_PAGE_BUTTONS = 5;
+
 export default {
   props: {
-    value: { type: Number, required: true }, //currentPAge
+    value: { type: Number, required: true }, //currentPage
     totalRows: { type: Number, required: true },
     perPage: { type: Number, default: 10 },
   },
@@ -37,29 +55,25 @@ export default {
       return this.$zetto.options.classes.search.pagination;
     },
     numberOfPages() {
-      const result = this.totalRows / this.perPage;
-      return result < 1 ? 1 : result;
+      return Math.ceil(this.totalRows / this.perPage);
     },
     pagesArray() {
       const pages = [];
 
-      if (this.numberOfPages > 3) {
-        console.log('ciao');
-        if (this.value === 0) {
-          for (let i = 0; i < 3; i++) {
-            pages.push(i);
-          }
-        } else if (this.value === this.numberOfPages - 1) {
-          for (let i = this.value; i < this.numberOfPages; i++) {
-            pages.push(i);
-          }
-        } else {
-          for (let i = this.value - 1; i < this.value + 1; i++) {
-            pages.push(i);
-          }
+      if (this.numberOfPages > NUMBER_OF_PAGE_BUTTONS) {
+        let start = this.value - Math.floor(NUMBER_OF_PAGE_BUTTONS / 2);
+        if (start <= 0) start = 1;
+
+        let end = start + NUMBER_OF_PAGE_BUTTONS;
+        if (end > this.numberOfPages) {
+          end = this.numberOfPages + 1;
+          start = end - NUMBER_OF_PAGE_BUTTONS;
+        }
+
+        for (let i = start; i < end; i++) {
+          pages.push(i);
         }
       } else {
-        console.log('amigo');
         for (let i = 0; i < this.numberOfPages; i++) {
           pages.push(i);
         }

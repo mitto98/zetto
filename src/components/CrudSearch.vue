@@ -112,6 +112,9 @@ export default {
   mounted() {
     this.$root.$on(EVENT_NAME_REFRESH_DATA, this.refreshDataHandler);
   },
+  beforeDestroy() {
+    this.$root.$off(EVENT_NAME_REFRESH_DATA, this.refreshDataHandler);
+  },
 
   created() {
     this.fetchData();
