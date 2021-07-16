@@ -1,10 +1,15 @@
 {
   "compilerOptions": {
-    "target": "esnext",
-    "module": "commonjs",
+    "target": "ES2017",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "isolatedModules": true,
+    "removeComments": true,
     "allowJs": true,
-    "checkJs": false,
+    "declaration": true,
+    "sourceMap": true,
     "outDir": "dist",
+    "rootDir": "src",
     "types": ["vite/client"]
   },
   "exclude": ["node_modules", "dist"],

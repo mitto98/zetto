@@ -1,5 +1,7 @@
 <template>
   <div>
+    <search-filter v-if="search" :action="action" @search="doSearch" />
+
     <table :class="cls.table" v-bind="$attrs">
       <thead v-if="headEnabled" :class="cls.tableHead">
         <tr>
@@ -13,6 +15,15 @@
             </slot>
           </th>
         </tr>
+        <!-- <tr>
+          <th
+            v-for="field in tableFields"
+            :key="field.name"
+            :class="cls.tableHeadCell"
+          >
+            <input type="text" class="form-control" />
+          </th>
+        </tr> -->
       </thead>
       <tbody>
         <tr v-if="error">
@@ -77,27 +88,28 @@
 </template>
 
 <script>
-import { cloneDeep, debounce } from 'lodash';
 import { EVENT_NAME_REFRESH_DATA } from '../constants/events';
 import classed, { classedProps } from '../mixins/classedMixin';
 import { mergeComponentFields } from '../utils/dataMapper.ts';
 import { lazyPromise } from '../utils/utils.ts';
 import TableError from './fragments/TableError.vue';
 import Pagination from './search/Pagination.vue';
+import SearchFilter from './search/SearchFilter.vue';
 
 export default {
   name: 'CrudSearch',
-  components: { TableError, Pagination },
+  components: { TableError, SearchFilter, Pagination },
   mixins: [classed('search')],
   props: {
     id: { type: String },
     action: { type: Object, required: true },
     fields: { type: Object, default: () => ({}) },
-    searchField: { type: String },
-    createPage: { type: String },
-    createLabel: { type: String },
+    search: { type: [Boolean, String], default: false },
+    // searchField: { type: String },
+    // createPage: { type: String },
+    // createLabel: { type: String },
     sort: { type: Object },
-    filters: { type: Object },
+    // filters: { type: Object },
     headEnabled: { type: Boolean, default: true },
     ...classedProps,
   },
@@ -105,7 +117,7 @@ export default {
     loading: false,
     items: [],
     currentPage: 1,
-    search: '',
+    formFilters: null,
     error: '',
   }),
 
@@ -121,9 +133,6 @@ export default {
   },
 
   watch: {
-    search: debounce(function () {
-      this.fetchData();
-    }, 300),
     currentPage() {
       this.fetchData();
     },
@@ -146,15 +155,19 @@ export default {
     async refreshDataHandler(id) {
       if (this.id && this.id === id) await this.fetchData();
     },
+    doSearch(s) {
+      this.formFilters = s;
+      this.fetchData();
+    },
     async fetchData() {
       this.loading = true;
-      const filters = this.filters ? cloneDeep(this.filters) : {};
-      if (this.searchField) filters[this.searchField] = this.search;
+      // const filters = this.filters ? cloneDeep(this.filters) : {};
+      // if (this.searchField) filters[this.searchField] = this.search;
 
       this.items = await lazyPromise(
         this.action.search({
           page: this.currentPage,
-          filters,
+          filters: this.formFilters,
           sort: this.sort,
         })
       );

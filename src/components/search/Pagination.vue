@@ -74,7 +74,7 @@ export default {
           pages.push(i);
         }
       } else {
-        for (let i = 0; i < this.numberOfPages; i++) {
+        for (let i = 1; i <= this.numberOfPages; i++) {
           pages.push(i);
         }
       }
