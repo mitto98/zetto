@@ -9,15 +9,18 @@
 </template>
 
 <script>
+import titledMixin, { titledMixinProps } from '../mixins/titledMixin';
 import { mapPropertyToFormulateField } from '../utils/dataMapper';
 import { mergeComponentFields } from '../utils/dataMapper.ts';
 
 export default {
   name: 'CrudCreate',
+  mixins: [titledMixin],
   props: {
     action: { type: Object, required: true },
     fields: { type: Object, default: () => ({}) },
     submitLabel: { type: String },
+    ...titledMixinProps,
   },
   data: () => ({
     isLoading: false,

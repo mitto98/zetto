@@ -1,21 +1,40 @@
 <template>
   <div>
-    <search-filter v-if="search" :action="action" @search="doSearch" />
+    <h1 v-if="title">
+      <slot
+        name="title"
+        :openFilter="() => (expanded = !expanded)"
+        isFilterOpen="expanded"
+      >
+        {{ elementTitle }}
+        <button class="btn btn-link" @click="expanded = !expanded">
+          Filtra
+        </button>
+      </slot>
+    </h1>
 
-    <table :class="cls.table" v-bind="$attrs">
-      <thead v-if="headEnabled" :class="cls.tableHead">
-        <tr>
-          <th
-            v-for="field in tableFields"
-            :key="field.name"
-            :class="cls.tableHeadCell"
-          >
-            <slot :name="`head(${field.name})`" :field="field">
-              {{ field.label }}
-            </slot>
-          </th>
-        </tr>
-        <!-- <tr>
+    <search-filter
+      v-if="search"
+      :action="action"
+      :expanded="expanded"
+      @search="doSearch"
+    />
+
+    <div :class="cls.tableWrapper">
+      <table :class="cls.table" v-bind="$attrs">
+        <thead v-if="headEnabled" :class="cls.tableHead">
+          <tr>
+            <th
+              v-for="field in tableFields"
+              :key="field.name"
+              :class="cls.tableHeadCell"
+            >
+              <slot :name="`head(${field.name})`" :field="field">
+                {{ field.label }}
+              </slot>
+            </th>
+          </tr>
+          <!-- <tr>
           <th
             v-for="field in tableFields"
             :key="field.name"
@@ -24,58 +43,59 @@
             <input type="text" class="form-control" />
           </th>
         </tr> -->
-      </thead>
-      <tbody>
-        <tr v-if="error">
-          <td :colspan="tableFields.length">
-            <slot name="error">
-              <table-error :message="error" />
-            </slot>
-          </td>
-        </tr>
+        </thead>
+        <tbody>
+          <tr v-if="error">
+            <td :colspan="tableFields.length">
+              <slot name="error">
+                <table-error :message="error" />
+              </slot>
+            </td>
+          </tr>
 
-        <tr v-else-if="loading">
-          <td :colspan="tableFields.length">
-            <slot name="busy">
-              <div style="padding: 20px 0; text-align: center">
-                Caricamento...
-              </div>
-            </slot>
-          </td>
-        </tr>
+          <tr v-else-if="loading">
+            <td :colspan="tableFields.length">
+              <slot name="busy">
+                <div style="padding: 20px 0; text-align: center">
+                  Caricamento...
+                </div>
+              </slot>
+            </td>
+          </tr>
 
-        <tr v-else-if="!items.length">
-          <td :colspan="tableFields.length">
-            <slot name="busy">
-              <div style="padding: 20px 0; text-align: center">
-                Nessun risultato
-              </div>
-            </slot>
-          </td>
-        </tr>
+          <tr v-else-if="!items.length">
+            <td :colspan="tableFields.length">
+              <slot name="busy">
+                <div style="padding: 20px 0; text-align: center">
+                  Nessun risultato
+                </div>
+              </slot>
+            </td>
+          </tr>
 
-        <tr v-else v-for="item in items" :key="item.key">
-          <td v-if="$scopedSlots.row" :colspan="tableFields.length">
-            <slot name="row" :action="action" :item="item" />
-          </td>
-          <td
-            v-else
-            v-for="field in tableFields"
-            :key="field.name"
-            :class="cls.tableBodyCell"
-          >
-            <slot
-              :name="`cell(${field.name})`"
-              :value="item[field.name]"
-              :action="action"
-              :item="item"
+          <tr v-else v-for="item in items" :key="item.key">
+            <td v-if="$scopedSlots.row" :colspan="tableFields.length">
+              <slot name="row" :action="action" :item="item" />
+            </td>
+            <td
+              v-else
+              v-for="field in tableFields"
+              :key="field.name"
+              :class="cls.tableBodyCell"
             >
-              {{ item.getDisplayValue(field.name) }}
-            </slot>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+              <slot
+                :name="`cell(${field.name})`"
+                :value="item[field.name]"
+                :action="action"
+                :item="item"
+              >
+                {{ item.getDisplayValue(field.name) }}
+              </slot>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
     <pagination
       v-if="action.totalRecords > pageSize"
@@ -90,6 +110,7 @@
 <script>
 import { EVENT_NAME_REFRESH_DATA } from '../constants/events';
 import classed, { classedProps } from '../mixins/classedMixin';
+import titledMixin, { titledMixinProps } from '../mixins/titledMixin';
 import { mergeComponentFields } from '../utils/dataMapper.ts';
 import { lazyPromise } from '../utils/utils.ts';
 import TableError from './fragments/TableError.vue';
@@ -99,12 +120,13 @@ import SearchFilter from './search/SearchFilter.vue';
 export default {
   name: 'CrudSearch',
   components: { TableError, SearchFilter, Pagination },
-  mixins: [classed('search')],
+  mixins: [titledMixin, classed('search')],
   props: {
     id: { type: String },
     action: { type: Object, required: true },
     fields: { type: Object, default: () => ({}) },
     search: { type: [Boolean, String], default: false },
+    pageSize: { type: [Number, Boolean], default: 10 },
     // searchField: { type: String },
     // createPage: { type: String },
     // createLabel: { type: String },
@@ -112,6 +134,7 @@ export default {
     // filters: { type: Object },
     headEnabled: { type: Boolean, default: true },
     ...classedProps,
+    ...titledMixinProps,
   },
   data: () => ({
     loading: false,
@@ -119,6 +142,7 @@ export default {
     currentPage: 1,
     formFilters: null,
     error: '',
+    expanded: false,
   }),
 
   mounted() {
@@ -127,7 +151,6 @@ export default {
   beforeDestroy() {
     this.$root.$off(EVENT_NAME_REFRESH_DATA, this.refreshDataHandler);
   },
-
   created() {
     this.fetchData();
   },
@@ -138,9 +161,10 @@ export default {
     },
   },
   computed: {
-    pageSize() {
+    compPageSize() {
       if (!this.action) return 0;
-      return this.action.config.rowsPerPage || 10;
+      if (this.pageSize === false) return 0;
+      return this.pageSize || this.action.config.rowsPerPage || 10;
     },
     tableFields() {
       if (!this.action) return [];
@@ -161,16 +185,25 @@ export default {
     },
     async fetchData() {
       this.loading = true;
+      const searchParams = {
+        page: this.currentPage,
+        filters: this.formFilters,
+        sort: this.sort,
+      };
+
+      // Pagination settings
+      if (this.pageSize === false) searchParams.pagination = false;
+      else searchParams.pageSize = this.compPageSize;
+
+      // Prop filters
       // const filters = this.filters ? cloneDeep(this.filters) : {};
       // if (this.searchField) filters[this.searchField] = this.search;
 
-      this.items = await lazyPromise(
-        this.action.search({
-          page: this.currentPage,
-          filters: this.formFilters,
-          sort: this.sort,
-        })
-      );
+      try {
+        this.items = await lazyPromise(this.action.search(searchParams));
+      } catch (e) {
+        this.error = 'Errore, impossibile caricaricare i dati!';
+      }
 
       this.loading = false;
     },

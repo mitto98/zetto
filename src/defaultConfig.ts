@@ -1,6 +1,7 @@
 export default {
   classes: {
     search: {
+      tableWrapper: '',
       table: '',
       tableHead: '',
       tableHeadRow: '',

@@ -1,6 +1,6 @@
 import { mergeDeep } from '../utils/utils';
 
-const classedMixin = (group) => ({
+const classedMixin = (group: any) => ({
   computed: {
     cls() {
       if (!this.classes) return {};

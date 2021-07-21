@@ -46,7 +46,7 @@ export async function mapSearchPropertyToFormulateField(
 ) {
   let children: any[];
 
-  function makeField(
+  function makeColField(
     name: string,
     type: string,
     className: string,
@@ -55,10 +55,12 @@ export async function mapSearchPropertyToFormulateField(
     return {
       component: 'div',
       class: className,
-      children: [
-        { name, type, label: label || ' ', class: !label ? 'pt-2' : null },
-      ],
+      children: [makeField(name, type, label)],
     };
+  }
+
+  function makeField(name: string, type: string, label?: string): any {
+    return { name, type, label: label || ' ', class: !label ? 'pt-2' : null };
   }
 
   function makeStringSearchMode(
@@ -90,58 +92,62 @@ export async function mapSearchPropertyToFormulateField(
 
     children = [
       {
-        component: 'div',
-        class: 'col',
-        children: [
-          {
-            name: property.name,
-            type: 'select',
-            label: property.label,
-            placeholder: 'Nessuna selezione',
-            options: options.map((o: any) => ({ value: o.v, label: o.l })),
-          },
-        ],
+        name: property.name,
+        type: 'select',
+        label: property.label,
+        placeholder: 'Nessuna selezione',
+        options: options.map((o: any) => ({ value: o.v, label: o.l })),
       },
     ];
   } else {
     switch (property.type) {
       case 'date':
         children = [
-          makeField(
-            `${property.name}_from`,
-            'date',
-            'col',
-            `${property.label} da`
-          ),
-          makeField(
-            `${property.name}_to`,
-            'date',
-            'col',
-            `${property.label} a`
-          ),
+          {
+            component: 'div',
+            class: 'form-row',
+            children: [
+              makeColField(
+                `${property.name}_from`,
+                'date',
+                'col',
+                `${property.label} da`
+              ),
+              makeColField(
+                `${property.name}_to`,
+                'date',
+                'col',
+                `${property.label} a`
+              ),
+            ],
+          },
         ];
         break;
       case 'string':
         children = [
-          makeStringSearchMode(
-            `${property.name}_mode`,
-            'col-md-4',
-            property.label
-          ),
-          makeField(property.name, 'text', 'col'),
+          {
+            component: 'div',
+            class: 'form-row',
+            children: [
+              makeStringSearchMode(
+                `${property.name}_mode`,
+                'col-4',
+                property.label
+              ),
+              makeColField(property.name, 'text', 'col'),
+            ],
+          },
         ];
         break;
       default:
-        children = [
-          makeField(property.name, mapAttrToFormType(property.type), 'col'),
-        ];
+        children = [makeField(property.name, mapAttrToFormType(property.type))];
         break;
     }
   }
 
   return {
     component: 'div',
-    class: 'form-row',
+    class: 'col-md-6',
     children,
   };
 }

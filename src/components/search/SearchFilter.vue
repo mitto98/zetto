@@ -1,13 +1,6 @@
 <template>
-  <div>
-    <formulate-form
-      v-if="schema"
-      v-model="form"
-      :schema="schema"
-      @submit="handleSubmit"
-      autocomplete="off"
-    />
-    <pre>{{ form }}</pre>
+  <div v-if="schema && expanded" class="search-filter">
+    <formulate-form v-model="form" :schema="schema" autocomplete="off" />
   </div>
 </template>
 
@@ -23,6 +16,7 @@ export default {
   name: 'SearchFilter',
   props: {
     action: { type: Object, required: true },
+    expanded: { type: Boolean, required: true },
   },
   data: () => ({
     schema: null,
@@ -34,13 +28,12 @@ export default {
 
   watch: {
     form: debounce(function () {
-      this.$emit(
-        'search',
-        searchFormToFilterOptions(
-          this.action.getSearchableProperties(),
-          this.form
-        )
+      const filterOpts = searchFormToFilterOptions(
+        this.action.getSearchableProperties(),
+        this.form
       );
+      console.log(filterOpts);
+      if (filterOpts) this.$emit('search', filterOpts);
     }, 300),
   },
   methods: {
@@ -52,16 +45,20 @@ export default {
         this.fields
       );
 
-      this.schema = await Promise.all(
-        fields.map((field) => {
-          const sp = this.action.getSelectionProviderByPropertyName(field.name);
-          return mapSearchPropertyToFormulateField(field, sp);
-        })
-      );
-    },
-    handleSubmit(x) {
-      this.action.getSearchableProperties().forEach((prop) => {});
-      console.log(x);
+      this.schema = [
+        {
+          component: 'div',
+          class: 'form-row',
+          children: await Promise.all(
+            fields.map((field) => {
+              const sp = this.action.getSelectionProviderByPropertyName(
+                field.name
+              );
+              return mapSearchPropertyToFormulateField(field, sp);
+            })
+          ),
+        },
+      ];
     },
   },
 };

@@ -1,31 +1,36 @@
 <template>
-  <dl>
-    <div v-for="field in tableFields" :key="field.name">
-      <dt>{{ field.label }}</dt>
-      <dd v-if="value">
-        <slot
-          :name="`data(${field.name})`"
-          :value="value[field.name]"
-          :item="value"
-        >
-          {{ value.getDisplayValue(field.name) }}
-        </slot>
-      </dd>
-    </div>
-  </dl>
+  <div>
+    <h1 v-if="title">{{ elementTitle }}</h1>
+    <dl>
+      <div v-for="field in tableFields" :key="field.name">
+        <dt>{{ field.label }}</dt>
+        <dd v-if="value">
+          <slot
+            :name="`data(${field.name})`"
+            :value="value[field.name]"
+            :item="value"
+          >
+            {{ value.getDisplayValue(field.name) }}
+          </slot>
+        </dd>
+      </div>
+    </dl>
+  </div>
 </template>
 
 <script>
 import { mergeComponentFields } from '../utils/dataMapper.ts';
+import titledMixin, { titledMixinProps } from '../mixins/titledMixin';
 // import actionBased from '../mixins/actionBased';
 
 export default {
-  name: 'CrudDetail',
-  //mixins: { actionBased },
+  name: 'CrudRead',
+  mixins: [titledMixin],
   props: {
     action: { type: [Object, String], required: true },
     fields: { type: Array, default: null },
     id: { required: true },
+    ...titledMixinProps,
   },
   data: () => ({
     isLoading: true,
