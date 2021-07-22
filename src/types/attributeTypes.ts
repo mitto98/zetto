@@ -6,6 +6,4 @@ export interface Attribute extends EntityProperty {
   display?: boolean | DisplayFunction;
 }
 
-export interface AttributesConfig {
-  [key: string]: Attribute;
-}
+export type AttributesConfig = Record<string, Attribute>;

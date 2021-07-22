@@ -1,6 +1,6 @@
 import { isString } from 'lodash';
 
-const titledMixin = {
+export default {
   computed: {
     elementTitle() {
       if (this.title && isString(this.title)) return this.title;
@@ -18,8 +18,6 @@ const titledMixin = {
     },
   },
 };
-
-export default titledMixin;
 
 export const titledMixinProps = {
   title: { type: [Boolean, String], default: false },

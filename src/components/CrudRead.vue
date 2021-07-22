@@ -21,27 +21,35 @@
 <script>
 import { mergeComponentFields } from '../utils/dataMapper.ts';
 import titledMixin, { titledMixinProps } from '../mixins/titledMixin';
-// import actionBased from '../mixins/actionBased';
+import listenOnRoot from '../mixins/listenOnRoot';
 
 export default {
   name: 'CrudRead',
-  mixins: [titledMixin],
+  mixins: [titledMixin, listenOnRoot],
   props: {
+    id: { type: String },
     action: { type: [Object, String], required: true },
     fields: { type: Array, default: null },
-    id: { required: true },
+    entity: { type: [String, Number], required: true },
     ...titledMixinProps,
   },
   data: () => ({
     isLoading: true,
     value: null,
   }),
-  async mounted() {
-    this.isLoading = true;
-    this.value = await this.action.get(this.id);
-    this.isLoading = false;
+  mounted() {
+    this.listenOnRoot(EVENT_NAME_REFRESH_DATA, this.refreshDataHandler);
+    this.fetchData();
   },
   computed: {
+    async refreshDataHandler(id) {
+      if (this.id && this.id === id) await this.fetchData();
+    },
+    async fetchData() {
+      this.isLoading = true;
+      this.value = await this.action.get(this.entity);
+      this.isLoading = false;
+    },
     tableFields() {
       if (!this.action) return [];
 

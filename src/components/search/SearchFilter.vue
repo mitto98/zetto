@@ -1,50 +1,49 @@
 <template>
-  <div v-if="schema && expanded" class="search-filter">
-    <formulate-form v-model="form" :schema="schema" autocomplete="off" />
-  </div>
+  <formulate-form
+    v-if="schema"
+    v-model="value"
+    :schema="schema"
+    autocomplete="off"
+  />
 </template>
 
 <script>
 import { debounce } from 'lodash';
+import { mergeComponentFields } from '../../utils/dataMapper';
 import {
   mapSearchPropertyToFormulateField,
-  mergeComponentFields,
   searchFormToFilterOptions,
-} from '../../utils/dataMapper';
+} from '../../lib/forms/searchForm';
 
 export default {
   name: 'SearchFilter',
   props: {
     action: { type: Object, required: true },
-    expanded: { type: Boolean, required: true },
   },
   data: () => ({
     schema: null,
-    form: null,
+    value: null,
   }),
   created() {
     this.loadSchema();
   },
 
   watch: {
-    form: debounce(function () {
+    value: debounce(function () {
       const filterOpts = searchFormToFilterOptions(
         this.action.getSearchableProperties(),
-        this.form
+        this.value
       );
-      console.log(filterOpts);
       if (filterOpts) this.$emit('search', filterOpts);
     }, 300),
   },
   methods: {
     async loadSchema() {
       if (!this.action) return;
-
       let fields = mergeComponentFields(
         this.action.getSearchableProperties(),
         this.fields
       );
-
       this.schema = [
         {
           component: 'div',

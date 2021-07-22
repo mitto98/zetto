@@ -1,17 +1,19 @@
 <template>
-  <formulate-form
-    v-if="schema"
-    v-model="form"
-    :schema="schema"
-    @submit="handleSubmit"
-    autocomplete="off"
-  />
+  <div>
+    <h1 v-if="title">{{ elementTitle }}</h1>
+    <formulate-form
+      v-if="schema"
+      v-model="form"
+      :schema="schema"
+      @submit="handleSubmit"
+      autocomplete="off"
+    />
+  </div>
 </template>
 
 <script>
 import titledMixin, { titledMixinProps } from '../mixins/titledMixin';
-import { mapPropertyToFormulateField } from '../utils/dataMapper';
-import { mergeComponentFields } from '../utils/dataMapper.ts';
+import { generateCreateFormSchema } from '../lib/forms/formFields';
 
 export default {
   name: 'CrudCreate',
@@ -33,34 +35,19 @@ export default {
   methods: {
     async loadSchema() {
       if (!this.action) return [];
-      const fields = mergeComponentFields(
-        this.action.getInsertableAttributes(),
-        this.fields
-      ).map(mapPropertyToFormulateField);
-
-      //TODO Custom selection provider
-      for (const field of fields) {
-        const sp = this.action.getSelectionProviderByPropertyName(field.name);
-        if (sp) {
-          field.type = 'select';
-          field.options = (await sp.getOptions()).map((o) => ({
-            value: o.v,
-            label: o.l,
-          }));
-        }
-      }
+      const fields = await generateCreateFormSchema(this.action, this.fields);
 
       fields.push({
         type: 'submit',
-        label: this.submitLabel || 'Crea nuovo',
+        label: this.submitLabel || 'Crea',
       });
 
       this.schema = fields;
     },
     async handleSubmit() {
       this.isLoading = true;
-      const customer = await this.action.create(this.form);
-      this.$emit('submit', customer);
+      const entity = await this.action.create(this.form);
+      this.$emit('submit', entity);
       this.isLoading = false;
     },
   },

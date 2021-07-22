@@ -1,22 +1,19 @@
 <template>
   <div>
     <h1 v-if="title">
-      <slot
+      <!-- <slot
         name="title"
         :openFilter="() => (expanded = !expanded)"
         isFilterOpen="expanded"
-      >
-        {{ elementTitle }}
-        <button class="btn btn-link" @click="expanded = !expanded">
-          Filtra
-        </button>
-      </slot>
+      > -->
+      {{ elementTitle }}
+      <button class="btn btn-link" @click="expanded = !expanded">Filtra</button>
+      <!-- </slot> -->
     </h1>
 
     <search-filter
-      v-if="search"
+      v-if="search && expanded"
       :action="action"
-      :expanded="expanded"
       @search="doSearch"
     />
 
@@ -111,6 +108,7 @@
 import { EVENT_NAME_REFRESH_DATA } from '../constants/events';
 import classed, { classedProps } from '../mixins/classedMixin';
 import titledMixin, { titledMixinProps } from '../mixins/titledMixin';
+import listenOnRoot from '../mixins/listenOnRoot';
 import { mergeComponentFields } from '../utils/dataMapper.ts';
 import { lazyPromise } from '../utils/utils.ts';
 import TableError from './fragments/TableError.vue';
@@ -120,7 +118,7 @@ import SearchFilter from './search/SearchFilter.vue';
 export default {
   name: 'CrudSearch',
   components: { TableError, SearchFilter, Pagination },
-  mixins: [titledMixin, classed('search')],
+  mixins: [titledMixin, classed('search'), listenOnRoot],
   props: {
     id: { type: String },
     action: { type: Object, required: true },
@@ -146,10 +144,7 @@ export default {
   }),
 
   mounted() {
-    this.$root.$on(EVENT_NAME_REFRESH_DATA, this.refreshDataHandler);
-  },
-  beforeDestroy() {
-    this.$root.$off(EVENT_NAME_REFRESH_DATA, this.refreshDataHandler);
+    this.listenOnRoot(EVENT_NAME_REFRESH_DATA, this.refreshDataHandler);
   },
   created() {
     this.fetchData();
