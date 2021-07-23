@@ -1,6 +1,6 @@
 import { CrudAction, EntityProperty } from '@manydesigns/portofino';
 import { AttributesConfig } from '../../types/attributeTypes';
-import { mergeComponentFields } from '../../utils/dataMapper';
+import { mergeComponentFields } from '../fields';
 import {
   FormulateSchema,
   mapPropertyToFormulateField,

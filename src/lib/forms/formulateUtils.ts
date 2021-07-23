@@ -13,10 +13,18 @@ export interface SchemaComponent extends FormulateBaseElement {
 
 export interface SchemaField extends FormulateBaseElement {
   type: string;
-  name: string;
+  name?: string;
   label?: string;
   placeholder?: string;
-  options?: { value: string; label: string }[] | Record<string, string>;
+  options?:
+    | { value: string; label: string }[]
+    | Record<string, string>
+    | string[];
+  elementClass?: string;
+  inputClass?: string;
+  validation?: string;
+  validationName?: string;
+  '@click'?: Function;
 }
 
 export type FormulateSchema = (SchemaComponent | SchemaField)[];

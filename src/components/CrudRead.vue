@@ -19,9 +19,10 @@
 </template>
 
 <script>
-import { mergeComponentFields } from '../utils/dataMapper.ts';
+import { mergeComponentFields } from '../lib/fields';
 import titledMixin, { titledMixinProps } from '../mixins/titledMixin';
 import listenOnRoot from '../mixins/listenOnRoot';
+import { EVENT_NAME_REFRESH_DATA } from '../constants/events';
 
 export default {
   name: 'CrudRead',
@@ -42,14 +43,6 @@ export default {
     this.fetchData();
   },
   computed: {
-    async refreshDataHandler(id) {
-      if (this.id && this.id === id) await this.fetchData();
-    },
-    async fetchData() {
-      this.isLoading = true;
-      this.value = await this.action.get(this.entity);
-      this.isLoading = false;
-    },
     tableFields() {
       if (!this.action) return [];
 
@@ -57,6 +50,16 @@ export default {
         this.action.getSummaryAttributes(),
         this.fields
       );
+    },
+  },
+  methods: {
+    async refreshDataHandler(id) {
+      if (this.id && this.id === id) await this.fetchData();
+    },
+    async fetchData() {
+      this.isLoading = true;
+      this.value = await this.action.get(this.entity);
+      this.isLoading = false;
     },
   },
 };

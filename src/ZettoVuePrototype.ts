@@ -1,6 +1,6 @@
 import { EVENT_NAME_REFRESH_DATA } from './constants/events';
 import defaultConfig from './defaultConfig';
-import { mergeDeep } from './utils/utils';
+import { mergeDeep } from './lib/utils';
 
 export default class ZettoProto {
   #vm: any;

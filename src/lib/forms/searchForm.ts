@@ -1,6 +1,7 @@
-import { EntityProperty } from '@manydesigns/portofino';
+import { CrudAction, EntityProperty } from '@manydesigns/portofino';
 import { isEmpty } from 'lodash';
-import { Attribute } from '../../types/attributeTypes';
+import { Attribute, AttributesConfig } from '../../types/attributeTypes';
+import { mergeComponentFields } from '../fields';
 import {
   FormulateSchema,
   mapAttrToFormType,
@@ -117,6 +118,40 @@ export async function mapSearchPropertyToFormulateField(
     class: 'col-md-6',
     children,
   };
+}
+
+export async function buildSearchForm(
+  action: CrudAction,
+  fieldsConf: AttributesConfig,
+  onFormClean: () => void
+): Promise<FormulateSchema> {
+  const fields = mergeComponentFields(
+    action.getSearchableProperties(),
+    fieldsConf
+  );
+
+  const searchFields = await Promise.all(
+    fields.map((field) => {
+      const sp = action.getSelectionProviderByPropertyName(field.name);
+      return mapSearchPropertyToFormulateField(field, sp);
+    })
+  );
+
+  return [
+    {
+      component: 'div',
+      class: 'form-row',
+      children: [
+        ...searchFields,
+        {
+          name: 'Pulisci i filtri',
+          type: 'button',
+          inputClass: 'btn btn-secondary',
+          '@click': onFormClean,
+        },
+      ],
+    },
+  ];
 }
 
 export function searchFormToFilterOptions(

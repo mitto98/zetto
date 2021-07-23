@@ -1,6 +1,6 @@
 <template>
   <formulate-form
-    v-if="schema"
+    v-if="schema && expanded"
     v-model="value"
     :schema="schema"
     autocomplete="off"
@@ -9,9 +9,8 @@
 
 <script>
 import { debounce } from 'lodash';
-import { mergeComponentFields } from '../../utils/dataMapper';
 import {
-  mapSearchPropertyToFormulateField,
+  buildSearchForm,
   searchFormToFilterOptions,
 } from '../../lib/forms/searchForm';
 
@@ -19,10 +18,12 @@ export default {
   name: 'SearchFilter',
   props: {
     action: { type: Object, required: true },
+    expanded: { type: Boolean, required: true },
   },
   data: () => ({
     schema: null,
     value: null,
+    cacheSearchOpts: null,
   }),
   created() {
     this.loadSchema();
@@ -30,34 +31,23 @@ export default {
 
   watch: {
     value: debounce(function () {
-      const filterOpts = searchFormToFilterOptions(
+      this.cacheSearchOpts = searchFormToFilterOptions(
         this.action.getSearchableProperties(),
         this.value
       );
-      if (filterOpts) this.$emit('search', filterOpts);
     }, 300),
+    cacheSearchOpts(opts) {
+      this.$emit('search', opts);
+    },
   },
   methods: {
     async loadSchema() {
       if (!this.action) return;
-      let fields = mergeComponentFields(
-        this.action.getSearchableProperties(),
-        this.fields
+      this.schema = await buildSearchForm(
+        this.action,
+        this.fields,
+        () => (this.value = {})
       );
-      this.schema = [
-        {
-          component: 'div',
-          class: 'form-row',
-          children: await Promise.all(
-            fields.map((field) => {
-              const sp = this.action.getSelectionProviderByPropertyName(
-                field.name
-              );
-              return mapSearchPropertyToFormulateField(field, sp);
-            })
-          ),
-        },
-      ];
     },
   },
 };

@@ -12,8 +12,9 @@
     </h1>
 
     <search-filter
-      v-if="search && expanded"
+      v-if="search"
       :action="action"
+      :expanded="expanded"
       @search="doSearch"
     />
 
@@ -62,7 +63,7 @@
 
           <tr v-else-if="!items.length">
             <td :colspan="tableFields.length">
-              <slot name="busy">
+              <slot name="empty">
                 <div style="padding: 20px 0; text-align: center">
                   Nessun risultato
                 </div>
@@ -109,8 +110,8 @@ import { EVENT_NAME_REFRESH_DATA } from '../constants/events';
 import classed, { classedProps } from '../mixins/classedMixin';
 import titledMixin, { titledMixinProps } from '../mixins/titledMixin';
 import listenOnRoot from '../mixins/listenOnRoot';
-import { mergeComponentFields } from '../utils/dataMapper.ts';
-import { lazyPromise } from '../utils/utils.ts';
+import { mergeComponentFields } from '../lib/fields';
+import { lazyPromise } from '../lib/utils.ts';
 import TableError from './fragments/TableError.vue';
 import Pagination from './search/Pagination.vue';
 import SearchFilter from './search/SearchFilter.vue';

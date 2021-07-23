@@ -1,4 +1,4 @@
-import { mergeDeep } from '../utils/utils';
+import { mergeDeep } from '../lib/utils';
 
 const classedMixin = (group: any) => ({
   computed: {
