@@ -9,6 +9,7 @@
 
 <script>
 import { debounce } from 'lodash';
+import translatorMixin from '../../mixins/translatorMixin';
 import {
   buildSearchForm,
   searchFormToFilterOptions,
@@ -16,6 +17,7 @@ import {
 
 export default {
   name: 'SearchFilter',
+  mixins: [translatorMixin],
   props: {
     action: { type: Object, required: true },
     expanded: { type: Boolean, required: true },
@@ -46,7 +48,8 @@ export default {
       this.schema = await buildSearchForm(
         this.action,
         this.fields,
-        () => (this.value = {})
+        () => (this.value = {}),
+        this.$trans
       );
     },
   },

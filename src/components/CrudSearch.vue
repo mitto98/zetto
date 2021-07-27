@@ -7,7 +7,9 @@
         isFilterOpen="expanded"
       > -->
       {{ elementTitle }}
-      <button class="btn btn-link" @click="expanded = !expanded">Filtra</button>
+      <button class="btn btn-link" @click="expanded = !expanded">
+        {{ $trans('zetto.search.filter') }}
+      </button>
       <!-- </slot> -->
     </h1>
 
@@ -28,7 +30,9 @@
               :class="cls.tableHeadCell"
             >
               <slot :name="`head(${field.name})`" :field="field">
-                {{ field.label }}
+                <slot name="head" :field="field">
+                  {{ field.label }}
+                </slot>
               </slot>
             </th>
           </tr>
@@ -55,7 +59,7 @@
             <td :colspan="tableFields.length">
               <slot name="busy">
                 <div style="padding: 20px 0; text-align: center">
-                  Caricamento...
+                  {{ $trans('zetto.search.loading') }}
                 </div>
               </slot>
             </td>
@@ -65,7 +69,7 @@
             <td :colspan="tableFields.length">
               <slot name="empty">
                 <div style="padding: 20px 0; text-align: center">
-                  Nessun risultato
+                  {{ $trans('zetto.search.no_results') }}
                 </div>
               </slot>
             </td>
@@ -110,6 +114,7 @@ import { EVENT_NAME_REFRESH_DATA } from '../constants/events';
 import classed, { classedProps } from '../mixins/classedMixin';
 import titledMixin, { titledMixinProps } from '../mixins/titledMixin';
 import listenOnRoot from '../mixins/listenOnRoot';
+import translatorMixin from '../mixins/translatorMixin';
 import { mergeComponentFields } from '../lib/fields';
 import { lazyPromise } from '../lib/utils.ts';
 import TableError from './fragments/TableError.vue';
@@ -119,7 +124,7 @@ import SearchFilter from './search/SearchFilter.vue';
 export default {
   name: 'CrudSearch',
   components: { TableError, SearchFilter, Pagination },
-  mixins: [titledMixin, classed('search'), listenOnRoot],
+  mixins: [titledMixin, classed('search'), listenOnRoot, translatorMixin],
   props: {
     id: { type: String },
     action: { type: Object, required: true },

@@ -27,6 +27,7 @@ function makeField(name: string, type: string, label?: string): SchemaField {
 }
 
 function makeStringSearchMode(
+  trans: Function,
   name: string,
   className: string,
   label?: string
@@ -40,10 +41,10 @@ function makeStringSearchMode(
         type: 'select',
         label,
         options: [
-          { value: '', label: 'Contiene' },
-          { value: 'equals', label: 'È uguale a' },
-          { value: 'starts', label: 'Inizia con' },
-          { value: 'ends', label: 'Finisce per' },
+          { value: '', label: trans('zetto.search.fields.mode.contains') },
+          { value: 'equals', label: trans('zetto.search.fields.mode.equals') },
+          { value: 'starts', label: trans('zetto.search.fields.mode.starts') },
+          { value: 'ends', label: trans('zetto.search.fields.mode.ends') },
         ],
       },
     ],
@@ -52,7 +53,8 @@ function makeStringSearchMode(
 
 export async function mapSearchPropertyToFormulateField(
   property: Attribute,
-  selectionProvider: any
+  selectionProvider: any,
+  trans: Function
 ): Promise<SchemaComponent> {
   let children: FormulateSchema;
 
@@ -79,13 +81,15 @@ export async function mapSearchPropertyToFormulateField(
                 `${property.name}_from`,
                 'date',
                 'col',
-                `${property.label} da`
+                trans('zetto.search.fields.range_from', {
+                  label: property.label,
+                })
               ),
               makeColField(
                 `${property.name}_to`,
                 'date',
                 'col',
-                `${property.label} a`
+                trans('zetto.search.fields.range_to', { label: property.label })
               ),
             ],
           },
@@ -98,6 +102,7 @@ export async function mapSearchPropertyToFormulateField(
             class: 'form-row',
             children: [
               makeStringSearchMode(
+                trans,
                 `${property.name}_mode`,
                 'col-4',
                 property.label
@@ -123,7 +128,8 @@ export async function mapSearchPropertyToFormulateField(
 export async function buildSearchForm(
   action: CrudAction,
   fieldsConf: AttributesConfig,
-  onFormClean: () => void
+  onFormClean: () => void,
+  trans: Function
 ): Promise<FormulateSchema> {
   const fields = mergeComponentFields(
     action.getSearchableProperties(),
@@ -133,7 +139,7 @@ export async function buildSearchForm(
   const searchFields = await Promise.all(
     fields.map((field) => {
       const sp = action.getSelectionProviderByPropertyName(field.name);
-      return mapSearchPropertyToFormulateField(field, sp);
+      return mapSearchPropertyToFormulateField(field, sp, trans);
     })
   );
 
@@ -144,10 +150,16 @@ export async function buildSearchForm(
       children: [
         ...searchFields,
         {
-          name: 'Pulisci i filtri',
-          type: 'button',
-          inputClass: 'btn btn-secondary',
-          '@click': onFormClean,
+          component: 'div',
+          class: 'col-12',
+          children: [
+            {
+              name: trans('zetto.search.filter_clean'),
+              type: 'button',
+              inputClass: 'btn btn-secondary',
+              '@click': onFormClean,
+            },
+          ],
         },
       ],
     },
