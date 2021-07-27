@@ -99,13 +99,27 @@
       </table>
     </div>
 
-    <pagination
-      v-if="action.totalRecords > pageSize"
-      v-model="currentPage"
-      :total-rows="action.totalRecords"
-      :per-page="pageSize"
-      :disabled="loading"
-    />
+    <div class="d-flex justify-content-between w-100">
+      <div>
+        <button
+          v-for="btn in buttons"
+          :key="btn.label"
+          class="btn btn-primary ml-2"
+          @click="btn.onClick"
+        >
+          {{ btn.label }}
+        </button>
+        <!-- &nbsp; -->
+      </div>
+
+      <pagination
+        v-if="action.totalRecords > pageSize"
+        v-model="currentPage"
+        :total-rows="action.totalRecords"
+        :per-page="pageSize"
+        :disabled="loading"
+      />
+    </div>
   </div>
 </template>
 
@@ -136,6 +150,7 @@ export default {
     // createLabel: { type: String },
     sort: { type: Object },
     // filters: { type: Object },
+    buttons: { type: Array, default: () => [] },
     headEnabled: { type: Boolean, default: true },
     ...classedProps,
     ...titledMixinProps,
