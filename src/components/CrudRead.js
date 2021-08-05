@@ -1,28 +1,8 @@
-<template>
-  <div>
-    <h1 v-if="title">{{ elementTitle }}</h1>
-    <dl>
-      <div v-for="field in tableFields" :key="field.name">
-        <dt>{{ field.label }}</dt>
-        <dd v-if="value">
-          <slot
-            :name="`data(${field.name})`"
-            :value="value[field.name]"
-            :item="value"
-          >
-            {{ value.getDisplayValue(field.name) }}
-          </slot>
-        </dd>
-      </div>
-    </dl>
-  </div>
-</template>
-
-<script>
 import { mergeComponentFields } from '../lib/fields';
 import titledMixin, { titledMixinProps } from '../mixins/titledMixin';
 import listenOnRoot from '../mixins/listenOnRoot';
 import { EVENT_NAME_REFRESH_DATA } from '../constants/events';
+import { Detail } from '../models/bootstrap4';
 
 export default {
   name: 'CrudRead',
@@ -35,8 +15,8 @@ export default {
     ...titledMixinProps,
   },
   data: () => ({
-    isLoading: true,
-    value: null,
+    loading: true,
+    item: null,
   }),
   mounted() {
     this.listenOnRoot(EVENT_NAME_REFRESH_DATA, this.refreshDataHandler);
@@ -57,10 +37,22 @@ export default {
       if (this.id && this.id === id) await this.fetchData();
     },
     async fetchData() {
-      this.isLoading = true;
-      this.value = await this.action.get(this.entity);
-      this.isLoading = false;
+      this.loading = true;
+      this.item = await this.action.get(this.entity);
+      this.loading = false;
     },
   },
+  render(h) {
+    return h('div', [
+      h('h1', this.elementTitle),
+      h(Detail, {
+        props: {
+          fields: this.tableFields,
+          item: this.item,
+          loading: this.loading,
+        },
+        scopedSlots: this.$scopedSlots,
+      }),
+    ]);
+  },
 };
-</script>
