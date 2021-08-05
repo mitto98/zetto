@@ -1,15 +1,14 @@
 <template>
-  <nav>
+  <nav :class="classes.nav">
     <ul :class="classes.ul">
       <li :class="`${classes.li} ${classes.first}`">
         <button
           :class="classes.button"
           :disabled="value === 1"
           @click="$emit('input', 1)"
-          aria-label="Precedente"
+          aria-label="Prima pagina"
         >
           <span aria-hidden="true">&laquo;</span>
-          <span class="sr-only">Precedente</span>
         </button>
       </li>
 
@@ -20,6 +19,7 @@
       >
         <button
           :class="`${classes.button} ${p === value ? classes.active : ''}`"
+          :aria-label="`Pagina ${p}`"
           @click="$emit('input', p)"
         >
           {{ p }}
@@ -31,10 +31,9 @@
           :class="classes.button"
           :disabled="value === numberOfPages"
           @click="$emit('input', numberOfPages)"
-          aria-label="Successivo"
+          aria-label="Ultima pagina"
         >
           <span aria-hidden="true">&raquo;</span>
-          <span class="sr-only">Successivo</span>
         </button>
       </li>
     </ul>

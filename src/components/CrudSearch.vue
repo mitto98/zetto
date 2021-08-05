@@ -27,6 +27,7 @@
             <th
               v-for="field in tableFields"
               :key="field.name"
+              scope="col"
               :class="cls.tableHeadCell"
             >
               <slot :name="`head(${field.name})`" :field="field">
@@ -36,15 +37,6 @@
               </slot>
             </th>
           </tr>
-          <!-- <tr>
-          <th
-            v-for="field in tableFields"
-            :key="field.name"
-            :class="cls.tableHeadCell"
-          >
-            <input type="text" class="form-control" />
-          </th>
-        </tr> -->
         </thead>
         <tbody>
           <tr v-if="error">
