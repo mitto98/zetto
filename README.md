@@ -1,16 +1,7 @@
 # Zetto
 
-## Configuration
-
-configPath: custom path to the user provided config path
-registerFormulate: se false, l'utente deve registratlo prima di questo plugin
-formulate: formulate configuration
-
 ## Roadmap
 
-- Abilitazione condizionale formulate
-- Configurazione condizionale formulate
-
-molto in la:
-
-- configurazione classi di tutti i componenti
+- Passaggio compinenti TS
+- Migrazione a vue 3
+- formvuelate

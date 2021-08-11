@@ -15,14 +15,7 @@ export default class ZettoProto {
     return this.#options;
   }
 
-  /**
-   * @deprecated Use reload
-   */
   refresh(id: string) {
-    this.reload(id);
-  }
-
-  reload(id: string) {
     if (id && this.#vm.$root) this.#vm.$root.$emit(EVENT_NAME_REFRESH_DATA, id);
   }
 }
