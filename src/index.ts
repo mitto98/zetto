@@ -11,9 +11,6 @@ declare module 'vue/types/vue' {
 
 // install function executed by Vue.use()
 export default function installZetto(Vue: VueConstructor, options: any) {
-  //TODO: Check if vue-formulate is installed
-  // Vue.use(VueFormulate)
-
   Vue.mixin({
     beforeCreate() {
       this.$zetto = new ZettoProto(this, options);

@@ -1,5 +1,8 @@
-export default {
+import { Config } from './types/configType';
+
+const defaultConfig: Config = {
   locale: 'it',
   model: 'bootstrap4',
-  formulate: {},
 };
+
+export default defaultConfig;

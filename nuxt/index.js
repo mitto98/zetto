@@ -1,13 +1,13 @@
 import fs from 'fs';
 import path from 'path';
 
-const defaultConfig = {
+const nuxtOptions = {
   configPath: false,
-  registerFormulate: true,
+  vueSelectCSS: true,
 };
 
 export default function (moduleOptions) {
-  let options = Object.assign(defaultConfig, this.options.zetto, moduleOptions);
+  let options = Object.assign(nuxtOptions, this.options.zetto, moduleOptions);
 
   if (
     !options.configPath &&
@@ -21,4 +21,8 @@ export default function (moduleOptions) {
     src: path.resolve(__dirname, 'plugin.js'),
     options: options,
   });
+
+  if (options.vueSelectCSS) {
+    this.options.css.unshift('vue-select/src/scss/vue-select.scss');
+  }
 }
