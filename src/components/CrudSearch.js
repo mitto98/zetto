@@ -16,6 +16,7 @@ export default {
     id: { type: String },
     action: { type: Object, required: true },
     fields: { type: Object, default: () => ({}) },
+    searchFields: { type: Object, default: () => ({}) },
     search: { type: [Boolean, String], default: false },
     pageSize: { type: [Number, Boolean], default: 10 },
     // searchField: { type: String },
@@ -56,7 +57,7 @@ export default {
       if (!this.action) return [];
 
       return mergeComponentFields(
-        this.action.getSummaryAttributes(),
+        this.action.getSummaryProperties(),
         this.fields
       );
     },
@@ -117,7 +118,11 @@ export default {
       this.title && title,
       this.search &&
         h(SearchFilter, {
-          props: { action: this.action, expanded: this.expanded },
+          props: {
+            action: this.action,
+            fields: this.searchFields,
+            expanded: this.expanded,
+          },
           on: { search: this.doSearch },
         }),
       h(Table, {

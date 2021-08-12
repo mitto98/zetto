@@ -1,52 +1,67 @@
 <template>
-  <div>
+  <form @submit.prevent="handleSubmit" autocomplete="off">
     <h1 v-if="title">{{ elementTitle }}</h1>
-    <formulate-form
-      v-if="schema"
-      v-model="form"
-      :schema="schema"
-      @submit="handleSubmit"
-      autocomplete="off"
+    <component
+      v-for="fs in schema"
+      :key="fs.name"
+      :is="getFieldComponent(fs.type)"
+      :id="fs.name"
+      :trans="$trans"
+      v-bind="fs"
+      v-model="value[fs.name]"
     />
-  </div>
+
+    <button type="submit" class="btn btn-primary">
+      {{ submitLabel || 'Crea' }}
+    </button>
+  </form>
 </template>
 
 <script>
 import titledMixin, { titledMixinProps } from '../mixins/titledMixin';
-import { generateCreateFormSchema } from '../lib/forms/formFields';
+import translatorMixin from '../mixins/translatorMixin';
+import { buildForm } from '../lib/forms/formFields';
+import { mergeComponentFields } from '../lib/fields';
+import * as FormFields from '../models/bootstrap4/fields';
 
 export default {
   name: 'CrudCreate',
-  mixins: [titledMixin],
+  mixins: [titledMixin, translatorMixin],
   props: {
     action: { type: Object, required: true },
-    fields: { type: Object, default: () => ({}) },
+    fields: { type: Object, default: () => ({}) }, // AttributesConfig with defaultValue field
     submitLabel: { type: String },
     ...titledMixinProps,
   },
   data: () => ({
     isLoading: false,
-    schema: null,
-    form: {},
+    schema: [],
+    value: {},
   }),
   created() {
     this.loadSchema();
   },
   methods: {
+    getFieldComponent(type) {
+      return FormFields[type] || FormFields.string;
+    },
     async loadSchema() {
-      if (!this.action) return [];
-      const fields = await generateCreateFormSchema(this.action, this.fields);
+      if (!this.action) return;
 
-      fields.push({
-        type: 'submit',
-        label: this.submitLabel || 'Crea',
+      let fields = mergeComponentFields(
+        this.action.getInsertableAttributes(),
+        this.fields
+      );
+
+      Object.entries(this.fields).forEach(([key, { defaultValue }]) => {
+        if (defaultValue !== undefined) this.value[key] = defaultValue;
       });
 
-      this.schema = fields;
+      this.schema = await buildForm(this.action, fields);
     },
     async handleSubmit() {
       this.isLoading = true;
-      const entity = await this.action.create(this.form);
+      const entity = await this.action.create(this.value);
       this.$emit('submit', entity);
       this.isLoading = false;
     },
