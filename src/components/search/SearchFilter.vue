@@ -1,31 +1,40 @@
 <template>
-  <formulate-form
-    v-if="schema && expanded"
-    v-model="value"
-    :schema="schema"
-    autocomplete="off"
-  />
+  <form v-if="schema && expanded" class="form-row my-3">
+    <div v-for="fs in schema" :key="fs.name" class="col-md-6">
+      <component
+        :is="getFieldComponent(fs.type)"
+        :id="fs.name"
+        :trans="$trans"
+        v-bind="fs"
+        v-model="value[fs.name]"
+      />
+    </div>
+    <div class="col-12">
+      <button role="button" class="btn btn-secondary" @click="value = {}">
+        {{ $trans('zetto.search.filter_clean') }}
+      </button>
+    </div>
+  </form>
 </template>
 
 <script>
 import { debounce } from 'lodash';
 import translatorMixin from '../../mixins/translatorMixin';
-import {
-  buildSearchForm,
-  searchFormToFilterOptions,
-} from '../../lib/forms/searchForm';
+import { buildSearchForm } from '../../lib/forms/searchForm';
+import { mergeComponentFields } from '../../lib/fields';
+import * as FormFields from '../../models/bootstrap4/fields';
 
 export default {
   name: 'SearchFilter',
   mixins: [translatorMixin],
   props: {
     action: { type: Object, required: true },
+    fields: { type: Object, default: () => ({}) },
     expanded: { type: Boolean, required: true },
   },
   data: () => ({
-    schema: null,
-    value: null,
-    cacheSearchOpts: null,
+    schema: [],
+    value: {},
   }),
   created() {
     this.loadSchema();
@@ -33,24 +42,21 @@ export default {
 
   watch: {
     value: debounce(function () {
-      this.cacheSearchOpts = searchFormToFilterOptions(
-        this.action.getSearchableProperties(),
-        this.value
-      );
+      this.$emit('search', this.value);
     }, 300),
-    cacheSearchOpts(opts) {
-      this.$emit('search', opts);
-    },
   },
   methods: {
+    getFieldComponent(type) {
+      return FormFields[type] || FormFields.string;
+    },
     async loadSchema() {
       if (!this.action) return;
-      this.schema = await buildSearchForm(
-        this.action,
-        this.fields,
-        () => (this.value = {}),
-        this.$trans
+      let fields = mergeComponentFields(
+        this.action.getSearchableProperties(),
+        this.fields
       );
+
+      this.schema = await buildSearchForm(this.action, fields);
     },
   },
 };

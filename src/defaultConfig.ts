@@ -1,26 +1,8 @@
-export default {
+import { Config } from './types/configType';
+
+const defaultConfig: Config = {
   locale: 'it',
-  classes: {
-    search: {
-      tableWrapper: '',
-      table: '',
-      tableHead: '',
-      tableHeadRow: '',
-      tableHeadCell: '',
-
-      tableBody: '',
-      tableBodyRow: '',
-      tableBodyCell: '',
-
-      pagination: {
-        ul: '',
-        li: '',
-        page: '',
-        active: '',
-        first: '',
-        last: '',
-        button: '',
-      },
-    },
-  },
+  model: 'bootstrap4',
 };
+
+export default defaultConfig;

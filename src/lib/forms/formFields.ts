@@ -1,54 +1,52 @@
-import { CrudAction, EntityProperty } from '@manydesigns/portofino';
-import { AttributesConfig } from '../../types/attributeTypes';
-import { mergeComponentFields } from '../fields';
 import {
-  FormulateSchema,
-  mapPropertyToFormulateField,
-  SchemaField,
-} from './formulateUtils';
+  CrudAction,
+  SearchSelectMode,
+  SelectMode,
+} from '@manydesigns/portofino';
+import {
+  Attribute,
+  FormField,
+  FormFieldType,
+} from '../../types/attributeTypes';
 
-async function generateActionFormSchema(
-  action: CrudAction,
-  properties: EntityProperty[],
-  fieldsConf: AttributesConfig
-): Promise<FormulateSchema> {
-  const fields: SchemaField[] = mergeComponentFields(
-    properties,
-    fieldsConf
-  ).map(mapPropertyToFormulateField);
-
-  //TODO Custom selection provider
-  for (const field of fields) {
-    const sp = action.getSelectionProviderByPropertyName(field.name);
-    if (sp) {
-      field.type = 'select';
-      field.options = (await sp.getOptions()).map((o) => ({
-        value: o.v,
-        label: o.l,
-      }));
-    }
+export function selectModeToField(
+  searchDm: SearchSelectMode | SelectMode
+): FormFieldType {
+  switch (searchDm) {
+    case SearchSelectMode.Dropdown:
+      return 'select';
+    case SearchSelectMode.Autocomplete:
+      return 'autocomplete';
+    case SearchSelectMode.Radio:
+      return 'radio';
+    case SearchSelectMode.Checkbox:
+      return 'multiple';
+    case SearchSelectMode.MultipleSelect:
+      return 'multipleSelect';
   }
-
-  return fields;
 }
 
-export function generateCreateFormSchema(
+export async function buildForm(
   action: CrudAction,
-  fieldsConf: AttributesConfig
-): Promise<FormulateSchema> {
-  return generateActionFormSchema(
-    action,
-    action.getInsertableAttributes(),
-    fieldsConf
-  );
-}
-export function generateUpdateFormSchema(
-  action: CrudAction,
-  fieldsConf: AttributesConfig
-): Promise<FormulateSchema> {
-  return generateActionFormSchema(
-    action,
-    action.getUpdatableAttributes(),
-    fieldsConf
+  fields: Attribute[]
+): Promise<FormField[]> {
+  return await Promise.all(
+    fields.map(async (field) => {
+      const res: FormField = {
+        name: field.name,
+        label: field.label,
+        type: field.type,
+      };
+
+      const sp = action.getSelectionProviderByPropertyName(field.name);
+
+      if (sp) {
+        const options = await sp.getOptions();
+        res.type = selectModeToField(sp.selectMode);
+        res.options = options.map((o) => ({ value: o.v, label: o.l }));
+      }
+
+      return res;
+    })
   );
 }

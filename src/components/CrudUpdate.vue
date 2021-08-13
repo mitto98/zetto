@@ -1,24 +1,32 @@
 <template>
-  <div>
+  <form @submit.prevent="handleSubmit" autocomplete="off">
     <h1 v-if="title">{{ elementTitle }}</h1>
-    <formulate-form
-      v-if="!isLoading"
-      v-model="value"
-      :schema="schema"
-      @submit="handleSubmit"
-      autocomplete="off"
+    <component
+      v-for="fs in schema"
+      :key="fs.name"
+      :is="getFieldComponent(fs.type)"
+      :id="fs.name"
+      :trans="$trans"
+      v-bind="fs"
+      v-model="value[fs.name]"
     />
-  </div>
+
+    <button type="submit" class="btn btn-primary">
+      {{ submitLabel || 'Salva' }}
+    </button>
+  </form>
 </template>
 
 <script>
-import { format } from 'date-fns';
+import { mergeComponentFields } from '../lib/fields';
+import { buildForm } from '../lib/forms/formFields';
 import titledMixin, { titledMixinProps } from '../mixins/titledMixin';
-import { generateUpdateFormSchema } from '../lib/forms/formFields';
+import translatorMixin from '../mixins/translatorMixin';
+import * as FormFields from '../models/bootstrap4/fields';
 
 export default {
   name: 'CrudUpdate',
-  mixins: [titledMixin],
+  mixins: [titledMixin, translatorMixin],
   props: {
     action: { type: Object, required: true },
     fields: { type: Object, default: () => ({}) },
@@ -28,39 +36,37 @@ export default {
   },
   data: () => ({
     isLoading: false,
-    schema: null,
-    value: null,
+    schema: [],
+    value: {},
   }),
   created() {
     this.fetchData();
   },
   methods: {
+    getFieldComponent(type) {
+      return FormFields[type] || FormFields.string;
+    },
     async fetchData() {
       if (!this.action) return [];
       this.isLoading = true;
-      await Promise.all([this.loadSchema(), this.loadData()]);
+
+      const entity = await this.action.get(this.entity);
+      this.value = entity.toObject();
+
+      console.log(this.value);
+
+      let fields = mergeComponentFields(
+        this.action.getUpdatableProperties(),
+        this.fields
+      );
+
+      this.schema = await buildForm(this.action, fields);
+
       this.isLoading = false;
-    },
-    async loadSchema() {
-      const fields = await generateUpdateFormSchema(this.action, this.fields);
-
-      fields.push({
-        type: 'submit',
-        label: this.submitLabel || 'Salva',
-      });
-
-      this.schema = fields;
-    },
-    async loadData() {
-      const value = (await this.action.get(this.entity)).toObject();
-      Object.entries(value).forEach(([k, v]) => {
-        if (v instanceof Date) value[k] = format(v, 'yyyy-MM-dd');
-      });
-      this.value = value;
     },
     async handleSubmit() {
       this.isLoading = true;
-      const entity = await this.action.update(this.entity, this.schema);
+      const entity = await this.action.update(this.entity, this.value);
       this.$emit('submit', entity);
       this.isLoading = false;
     },
