@@ -22,7 +22,7 @@ export default {
     // searchField: { type: String },
     // createPage: { type: String },
     // createLabel: { type: String },
-    sort: { type: Object },
+    // sort: { type: Object },
     // filters: { type: Object },
     buttons: { type: Array, default: () => [] },
     headEnabled: { type: Boolean, default: true },
@@ -33,6 +33,7 @@ export default {
     items: [],
     currentPage: 1,
     formFilters: null,
+    sort: null,
     error: '',
     expanded: false,
   }),
@@ -44,6 +45,9 @@ export default {
 
   watch: {
     currentPage() {
+      this.fetchData();
+    },
+    sort() {
       this.fetchData();
     },
   },
@@ -129,10 +133,16 @@ export default {
         props: {
           fields: this.tableFields,
           items: this.items,
+          sort: this.sort,
           headEnabled: this.headEnabled,
           loading: this.loading,
           error: this.error,
           action: this.action,
+        },
+        on: {
+          sort: (sort) => {
+            this.sort = sort;
+          },
         },
         scopedSlots: this.$scopedSlots,
       }),

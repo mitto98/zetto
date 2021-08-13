@@ -5,6 +5,7 @@ export interface Attribute {
   label: string;
   type: AttributeType;
   display?: boolean | (() => boolean);
+  sort?: boolean;
 }
 
 export type AttributesConfig = Record<string, Attribute>;

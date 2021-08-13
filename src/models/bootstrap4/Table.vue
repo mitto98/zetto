@@ -3,10 +3,67 @@
     <table class="table">
       <thead v-if="headEnabled">
         <tr>
-          <th v-for="field in fields" :key="field.name" scope="col">
-            <slot :name="`head(${field.name})`" :field="field">
-              <slot name="head" :field="field">
-                {{ field.label }}
+          <th
+            v-for="field in fields"
+            :key="field.name"
+            scope="col"
+            @click="() => onSortChange(field.name)"
+          >
+            <slot
+              :name="`head(${field.name})`"
+              :field="field"
+              :sort="sort && sort.field === field.name ? sort.direction : null"
+            >
+              <slot
+                name="head"
+                :field="field"
+                :sort="
+                  sort && sort.field === field.name ? sort.direction : null
+                "
+              >
+                <span class="d-block" style="cursor: pointer">
+                  {{ field.label }}
+                  <span>
+                    <i
+                      :style="{
+                        borderBottomColor:
+                          sort &&
+                          sort.property === field.name &&
+                          sort.direction === 'desc'
+                            ? '#dee2e6'
+                            : 'black',
+                      }"
+                      style="
+                        display: inline-block;
+                        border-bottom: 0.3em solid;
+                        border-right: 0.3em solid transparent;
+                        border-top: 0;
+                        border-left: 0.3em solid transparent;
+                        position: relative;
+                        left: 9px;
+                        bottom: 6px;
+                      "
+                    />
+                    <i
+                      :style="{
+                        borderTopColor:
+                          sort &&
+                          sort.property === field.name &&
+                          sort.direction === 'asc'
+                            ? '#dee2e6'
+                            : 'black',
+                      }"
+                      style="
+                        display: inline-block;
+                        border-top: 0.3em solid;
+                        border-right: 0.3em solid transparent;
+                        border-bottom: 0;
+                        border-left: 0.3em solid transparent;
+                        position: relative;
+                      "
+                    />
+                  </span>
+                </span>
               </slot>
             </slot>
           </th>
@@ -100,9 +157,26 @@ export default {
     items: { type: Array, required: true },
     headEnabled: { type: Boolean, required: true },
     loading: { type: Boolean, required: true },
+    sort: { typ: Object },
 
     error: { required: true },
     action: { required: true },
+  },
+  methods: {
+    onSortChange(field) {
+      const SortDirMap = { asc: 'desc', desc: null };
+      let direction = this.sort?.direction
+        ? SortDirMap[this.sort?.direction]
+        : 'asc';
+
+      if (this.sort?.property !== field) direction = 'asc';
+
+      if (direction) {
+        this.$emit('sort', { direction: direction, property: field });
+      } else {
+        this.$emit('sort', null);
+      }
+    },
   },
 };
 </script>
