@@ -10,9 +10,12 @@
       />
     </div>
     <div class="col-12">
-      <button role="button" class="btn btn-secondary" @click="value = {}">
-        {{ $trans('zetto.search.filter_clean') }}
-      </button>
+      <button
+        role="button"
+        class="btn btn-secondary"
+        @click="value = {}"
+        :label="$trans('zetto.search.filter_clean')"
+      />
     </div>
   </form>
 </template>
@@ -22,10 +25,11 @@ import { debounce } from 'lodash';
 import translatorMixin from '../../mixins/translatorMixin';
 import { buildSearchForm } from '../../lib/forms/searchForm';
 import { mergeComponentFields } from '../../lib/fields';
-import * as FormFields from '../../models/bootstrap4/fields';
+import { Button, FormFields } from '../../models/bootstrap4';
 
 export default {
   name: 'SearchFilter',
+  components: { Button },
   mixins: [translatorMixin],
   props: {
     action: { type: Object, required: true },

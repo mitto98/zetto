@@ -10,10 +10,8 @@
       v-bind="fs"
       v-model="value[fs.name]"
     />
-
-    <button type="submit" class="btn btn-primary">
-      {{ submitLabel || 'Crea' }}
-    </button>
+    <button :type="submit" variant="primary" :label="submitLabel || 'Crea'" />
+    <button v-for="(btn, i) in buttons" :key="i" v-bind="btn" />
   </form>
 </template>
 
@@ -22,15 +20,17 @@ import titledMixin, { titledMixinProps } from '../mixins/titledMixin';
 import translatorMixin from '../mixins/translatorMixin';
 import { buildForm } from '../lib/forms/formFields';
 import { mergeComponentFields } from '../lib/fields';
-import * as FormFields from '../models/bootstrap4/fields';
+import { Button, FormFields } from '../models/bootstrap4';
 
 export default {
+  components: { Button },
   name: 'CrudCreate',
   mixins: [titledMixin, translatorMixin],
   props: {
     action: { type: Object, required: true },
     fields: { type: Object, default: () => ({}) }, // AttributesConfig with defaultValue field
     submitLabel: { type: String },
+    buttons: { type: Array, default: () => [] },
     ...titledMixinProps,
   },
   data: () => ({

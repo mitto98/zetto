@@ -7,7 +7,7 @@ import { mergeComponentFields } from '../lib/fields';
 import { lazyPromise } from '../lib/utils';
 import SearchFilter from './search/SearchFilter.vue';
 
-import { Table, Pagination } from '../models/bootstrap4';
+import { Table, Pagination, Button } from '../models/bootstrap4';
 
 export default {
   name: 'CrudSearch',
@@ -150,15 +150,10 @@ export default {
         h(
           'div',
           this.buttons.map((btn) =>
-            h(
-              'button',
-              {
-                key: btn.label,
-                class: 'btn btn-primary',
-                on: { click: btn.onClick },
-              },
-              btn.label
-            )
+            h(Button, {
+              key: btn.label,
+              props: btn,
+            })
           )
         ),
         this.action.totalRecords > this.pageSize &&
