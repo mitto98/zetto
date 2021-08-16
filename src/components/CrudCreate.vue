@@ -10,8 +10,8 @@
       v-bind="fs"
       v-model="value[fs.name]"
     />
-    <button :type="submit" variant="primary" :label="submitLabel || 'Crea'" />
-    <button v-for="(btn, i) in buttons" :key="i" v-bind="btn" />
+    <Button :type="submit" variant="primary" :label="submitLabel || 'Crea'" />
+    <Button v-for="(btn, i) in buttons" :key="i" v-bind="btn" />
   </form>
 </template>
 

@@ -10,7 +10,7 @@
       />
     </div>
     <div class="col-12">
-      <button
+      <Button
         role="button"
         class="btn btn-secondary"
         @click="value = {}"
