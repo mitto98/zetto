@@ -45,9 +45,12 @@ export default {
   },
 
   watch: {
-    value: debounce(function () {
-      this.$emit('search', this.value);
-    }, 300),
+    value: {
+      deep: true,
+      handler: debounce(function () {
+        this.$emit('search', this.value);
+      }, 300),
+    },
   },
   methods: {
     getFieldComponent(type) {

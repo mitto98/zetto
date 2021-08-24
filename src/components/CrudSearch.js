@@ -72,10 +72,12 @@ export default {
     },
     doSearch(s) {
       this.formFilters = s;
+      this.$emit('search', s);
       this.fetchData();
     },
     async fetchData() {
       this.loading = true;
+
       const searchParams = {
         pagination: true,
         page: this.currentPage,
@@ -138,6 +140,7 @@ export default {
           loading: this.loading,
           error: this.error,
           action: this.action,
+          trans: this.$trans,
         },
         on: {
           sort: (sort) => {

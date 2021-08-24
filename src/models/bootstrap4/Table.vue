@@ -7,62 +7,29 @@
             v-for="field in fields"
             :key="field.name"
             scope="col"
-            @click="() => onSortChange(field.name)"
+            @click="() => onSortChange(field)"
           >
             <slot
               :name="`head(${field.name})`"
               :field="field"
-              :sort="sort && sort.field === field.name ? sort.direction : null"
+              :sort="getFieldSortDirection(field)"
             >
               <slot
                 name="head"
                 :field="field"
-                :sort="
-                  sort && sort.field === field.name ? sort.direction : null
-                "
+                :sort="getFieldSortDirection(field)"
               >
-                <span class="d-block" style="cursor: pointer">
+                <span
+                  class="d-block"
+                  :style="{
+                    cursor: isFieldSortable(field) ? 'pointer' : 'default',
+                  }"
+                >
                   {{ field.label }}
-                  <span>
-                    <i
-                      :style="{
-                        borderBottomColor:
-                          sort &&
-                          sort.property === field.name &&
-                          sort.direction === 'desc'
-                            ? '#dee2e6'
-                            : 'black',
-                      }"
-                      style="
-                        display: inline-block;
-                        border-bottom: 0.3em solid;
-                        border-right: 0.3em solid transparent;
-                        border-top: 0;
-                        border-left: 0.3em solid transparent;
-                        position: relative;
-                        left: 9px;
-                        bottom: 6px;
-                      "
-                    />
-                    <i
-                      :style="{
-                        borderTopColor:
-                          sort &&
-                          sort.property === field.name &&
-                          sort.direction === 'asc'
-                            ? '#dee2e6'
-                            : 'black',
-                      }"
-                      style="
-                        display: inline-block;
-                        border-top: 0.3em solid;
-                        border-right: 0.3em solid transparent;
-                        border-bottom: 0;
-                        border-left: 0.3em solid transparent;
-                        position: relative;
-                      "
-                    />
-                  </span>
+                  <sort-order-span
+                    v-if="isFieldSortable(field)"
+                    :direction="getFieldSortDirection(field)"
+                  />
                 </span>
               </slot>
             </slot>
@@ -74,38 +41,7 @@
         <tr v-if="error">
           <td :colspan="fields.length">
             <slot name="error">
-              <div
-                style="padding: 20px 0; text-align: center; font-weight: bold"
-              >
-                <svg
-                  version="1.1"
-                  xmlns="http://www.w3.org/2000/svg"
-                  xmlns:xlink="http://www.w3.org/1999/xlink"
-                  viewBox="0 0 50 50"
-                  style="height: 60px; margin-bottom: 0.4rem"
-                  xml:space="preserve"
-                >
-                  <circle style="fill: #d75a4a" cx="25" cy="25" r="25" />
-                  <polyline
-                    style="
-                      stroke: #ffffff;
-                      stroke-width: 2;
-                      stroke-linecap: round;
-                    "
-                    points="16,34 25,25 34,16"
-                  />
-                  <polyline
-                    style="
-                      stroke: #ffffff;
-                      stroke-width: 2;
-                      stroke-linecap: round;
-                    "
-                    points="16,16 25,25 34,34"
-                  />
-                </svg>
-                <br />
-                {{ errror }}
-              </div>
+              <table-error :message="error" />
             </slot>
           </td>
         </tr>
@@ -114,7 +50,7 @@
           <td :colspan="fields.length">
             <slot name="busy">
               <div style="padding: 20px 0; text-align: center">
-                <!-- {{ $trans('zetto.search.loading') }} -->
+                {{ trans('zetto.search.loading') }}
               </div>
             </slot>
           </td>
@@ -124,7 +60,7 @@
           <td :colspan="fields.length">
             <slot name="empty">
               <div style="padding: 20px 0; text-align: center">
-                <!-- {{ $trans('zetto.search.no_results') }} -->
+                {{ trans('zetto.search.no_results') }}
               </div>
             </slot>
           </td>
@@ -151,7 +87,11 @@
 </template>
 
 <script>
+import SortOrderSpan from './components/SortOrderSpan.vue';
+import TableError from './components/TableError.vue';
+
 export default {
+  components: { SortOrderSpan, TableError },
   props: {
     fields: { type: Array, required: true },
     items: { type: Array, required: true },
@@ -161,21 +101,32 @@ export default {
 
     error: { required: true },
     action: { required: true },
+    trans: { required: true },
   },
   methods: {
+    isFieldSortable(field) {
+      return field.sortable !== false && !field.custom;
+    },
+    getFieldSortDirection(field) {
+      if (this.isFieldSortable(field))
+        return this.sort && this.sort.property === field.name
+          ? this.sort.direction
+          : null;
+    },
     onSortChange(field) {
+      if (!this.isFieldSortable(field)) return;
+
       const SortDirMap = { asc: 'desc', desc: null };
       let direction = this.sort?.direction
         ? SortDirMap[this.sort?.direction]
         : 'asc';
 
-      if (this.sort?.property !== field) direction = 'asc';
+      if (this.sort?.property !== field.name) direction = 'asc';
 
-      if (direction) {
-        this.$emit('sort', { direction: direction, property: field });
-      } else {
-        this.$emit('sort', null);
-      }
+      this.$emit(
+        'sort',
+        direction ? { direction: direction, property: field.name } : null
+      );
     },
   },
 };
