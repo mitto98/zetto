@@ -1,10 +1,11 @@
 <template>
   <div class="form-group">
-    <label :for="id">{{ label }}</label>
+    <label :for="id">{{ label }} {{ required ? '*' : '' }}</label>
     <select
       :id="id"
       :name="id"
       :value="value"
+      :required="required"
       class="form-control"
       @input="$emit('input', $event.target.value)"
     >
@@ -23,6 +24,7 @@ export default {
     type: { type: String, default: 'text' },
     value: { required: true },
     options: { type: Array },
+    required: { type: Boolean, default: false },
   },
 };
 </script>

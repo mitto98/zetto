@@ -1,15 +1,21 @@
-export declare type AttributeType = 'string' | 'number' | 'date' | 'boolean';
-
-export interface Attribute {
+/** Table attribute **/
+export interface BaseAttribute {
   name: string;
   label: string;
-  type: AttributeType;
   display?: boolean | (() => boolean);
-  sortable?: boolean;
   custom?: boolean;
 }
 
-export type AttributesConfig = Record<string, Attribute>;
+export type AttributesConfig = Record<string, BaseAttribute>;
+
+/** Table attribute **/
+
+export declare type AttributeType = 'string' | 'number' | 'date' | 'boolean';
+
+export interface Attribute extends BaseAttribute {
+  type: AttributeType;
+  sortable?: boolean;
+}
 
 /** Form fields **/
 
@@ -27,9 +33,9 @@ export type FormFieldType =
   | 'autocomplete'
   | SearchFormFieldType;
 
-export interface FormField {
-  name: string;
-  label: string;
+export interface FormField extends BaseAttribute {
   type: FormFieldType;
+  defaultValue: any;
+  required?: boolean;
   options?: { value: string; label: string }[];
 }

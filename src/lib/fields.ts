@@ -1,19 +1,19 @@
 import { startCase } from 'lodash';
-import { Attribute, AttributesConfig } from '../types/attributeTypes';
+import { AttributesConfig, BaseAttribute } from '../types/attributeTypes';
 
 export function mergeComponentFields(
-  fields: Attribute[],
+  fields: BaseAttribute[],
   fieldsConf: AttributesConfig
-): Attribute[] {
+): BaseAttribute[] {
   if (!fields) return [];
 
-  const res: Attribute[] = fields.map((field) => {
+  const res: BaseAttribute[] = fields.map((field) => {
     const fieldConf = fieldsConf?.[field.name] || {};
     return { ...field, ...fieldConf };
   });
 
   if (fieldsConf) {
-    const addFields: Attribute[] = Object.entries(fieldsConf)
+    const addFields: BaseAttribute[] = Object.entries(fieldsConf)
       .map(([key, val]) => ({
         ...val,
         name: key,

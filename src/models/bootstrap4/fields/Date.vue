@@ -6,6 +6,7 @@
         <input
           :id="id"
           :value="inputValue"
+          :required="required"
           class="form-control"
           placeholder="dd/mm/yyyy"
           v-on="inputEvents"
@@ -24,6 +25,7 @@ export default {
     id: { type: String, required: true },
     label: { type: String, required: true },
     value: { required: true },
+    required: { type: Boolean, default: false },
     trans: { type: Function, required: true },
   },
 };

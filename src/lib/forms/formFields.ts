@@ -3,11 +3,7 @@ import {
   SearchSelectMode,
   SelectMode,
 } from '@manydesigns/portofino';
-import {
-  Attribute,
-  FormField,
-  FormFieldType,
-} from '../../types/attributeTypes';
+import { FormField, FormFieldType } from '../../types/attributeTypes';
 
 export function selectModeToField(
   searchDm: SearchSelectMode | SelectMode
@@ -28,15 +24,11 @@ export function selectModeToField(
 
 export async function buildForm(
   action: CrudAction,
-  fields: Attribute[]
+  fields: FormField[]
 ): Promise<FormField[]> {
   return await Promise.all(
     fields.map(async (field) => {
-      const res: FormField = {
-        name: field.name,
-        label: field.label,
-        type: field.type,
-      };
+      const res: FormField = { ...field };
 
       const sp = action.getSelectionProviderByPropertyName(field.name);
 

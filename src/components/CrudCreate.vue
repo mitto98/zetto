@@ -1,6 +1,6 @@
 <template>
   <form @submit.prevent="handleSubmit" autocomplete="off">
-    <h1 v-if="title">{{ elementTitle }}</h1>
+    <h1 v-if="title" class="mb-2">{{ elementTitle }}</h1>
     <component
       v-for="fs in schema"
       :key="fs.name"
@@ -10,7 +10,7 @@
       v-bind="fs"
       v-model="value[fs.name]"
     />
-    <Button :type="submit" variant="primary" :label="submitLabel || 'Crea'" />
+    <Button type="submit" variant="primary" :label="submitLabel || 'Crea'" />
     <Button v-for="(btn, i) in buttons" :key="i" v-bind="btn" />
   </form>
 </template>
@@ -32,6 +32,7 @@ export default {
     submitLabel: { type: String },
     buttons: { type: Array, default: () => [] },
     ...titledMixinProps,
+    validate: { type: Function }, // (data: any) => any
   },
   data: () => ({
     isLoading: false,
@@ -61,7 +62,8 @@ export default {
     },
     async handleSubmit() {
       this.isLoading = true;
-      const entity = await this.action.create(this.value);
+      const value = this.validate ? this.validate(this.value) : this.value;
+      const entity = await this.action.create(value);
       this.$emit('submit', entity);
       this.isLoading = false;
     },
