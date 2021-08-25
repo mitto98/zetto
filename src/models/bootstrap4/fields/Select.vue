@@ -25,6 +25,7 @@ export default {
     value: { required: true },
     options: { type: Array },
     required: { type: Boolean, default: false },
+    trans: { type: Function, required: true },
   },
 };
 </script>

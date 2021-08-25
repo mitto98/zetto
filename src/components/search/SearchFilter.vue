@@ -11,8 +11,6 @@
     </div>
     <div class="col-12">
       <Button
-        role="button"
-        class="btn btn-secondary"
         @click="value = {}"
         :label="$trans('zetto.search.filter_clean')"
       />

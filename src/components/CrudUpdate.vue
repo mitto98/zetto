@@ -6,9 +6,10 @@
       :key="fs.name"
       :is="getFieldComponent(fs.type)"
       :id="fs.name"
+      :value="value[fs.name]"
       :trans="$trans"
       v-bind="fs"
-      v-model="value[fs.name]"
+      @input="(val) => handleFieldInput(fs.name, val)"
     />
 
     <Button type="submit" variant="primary" :label="submitLabel || 'Salva'" />
@@ -48,14 +49,15 @@ export default {
     getFieldComponent(type) {
       return FormFields[type] || FormFields.string;
     },
+    handleFieldInput(fieldName, value) {
+      this.value = { ...this.value, [fieldName]: value };
+    },
     async fetchData() {
       if (!this.action) return [];
       this.isLoading = true;
 
       const entity = await this.action.get(this.entity);
       this.value = entity.toObject();
-
-      console.log(this.value);
 
       let fields = mergeComponentFields(
         this.action.getUpdatableProperties(),

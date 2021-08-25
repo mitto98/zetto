@@ -33,6 +33,7 @@ export default {
     options: { type: Array },
     // Component specific
     inline: { type: Boolean, default: false },
+    trans: { type: Function, required: true },
   },
 };
 </script>

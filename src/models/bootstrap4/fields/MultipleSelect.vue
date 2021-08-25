@@ -24,6 +24,7 @@ export default {
     type: { type: String, default: 'text' },
     value: { required: true },
     options: { type: Array },
+    trans: { type: Function, required: true },
   },
 };
 </script>

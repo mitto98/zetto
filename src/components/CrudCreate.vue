@@ -6,10 +6,12 @@
       :key="fs.name"
       :is="getFieldComponent(fs.type)"
       :id="fs.name"
+      :value="value[fs.name]"
       :trans="$trans"
       v-bind="fs"
-      v-model="value[fs.name]"
+      @input="(val) => handleFieldInput(fs.name, val)"
     />
+
     <Button type="submit" variant="primary" :label="submitLabel || 'Crea'" />
     <Button v-for="(btn, i) in buttons" :key="i" v-bind="btn" />
   </form>
@@ -46,6 +48,9 @@ export default {
     getFieldComponent(type) {
       return FormFields[type] || FormFields.string;
     },
+    handleFieldInput(fieldName, value) {
+      this.value = { ...this.value, [fieldName]: value };
+    },
     async loadSchema() {
       if (!this.action) return;
 
@@ -55,6 +60,7 @@ export default {
       );
 
       Object.entries(this.fields).forEach(([key, { defaultValue }]) => {
+        console.log(key, defaultValue);
         if (defaultValue !== undefined) this.value[key] = defaultValue;
       });
 
