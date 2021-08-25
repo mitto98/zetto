@@ -1,3 +1,4 @@
+import { startCase } from 'lodash';
 import { Attribute, AttributesConfig } from '../types/attributeTypes';
 
 export function mergeComponentFields(
@@ -13,7 +14,12 @@ export function mergeComponentFields(
 
   if (fieldsConf) {
     const addFields: Attribute[] = Object.entries(fieldsConf)
-      .map(([key, val]) => ({ ...val, name: key, custom: true }))
+      .map(([key, val]) => ({
+        ...val,
+        name: key,
+        label: val.label || startCase(key),
+        custom: true,
+      }))
       .filter((aField) => !fields.find((f) => f.name === aField.name));
 
     res.push(...addFields);

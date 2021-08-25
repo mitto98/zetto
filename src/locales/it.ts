@@ -14,6 +14,7 @@ export default {
         },
         range_from: '{label} da',
         range_to: '{label} a',
+        loading_more: 'Carico altre opzioni...',
       },
     },
   },

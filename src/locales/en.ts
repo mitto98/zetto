@@ -14,6 +14,7 @@ export default {
         },
         range_from: 'From {label}',
         range_to: 'To {label}',
+        loading_more: 'Loading more options...',
       },
     },
   },
