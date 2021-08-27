@@ -1,6 +1,9 @@
 <template>
   <div>
-    <label :class="{ 'd-block': inline }">{{ label }}</label>
+    <label :class="{ 'd-block': inline }">
+      {{ label }}
+      <span v-if="required" aria-hidden="true">*</span>
+    </label>
     <div
       v-for="opt in options"
       :key="opt.value"
@@ -34,6 +37,7 @@ export default {
     // Component specific
     inline: { type: Boolean, default: false },
     trans: { type: Function, required: true },
+    required: { type: Boolean, default: false },
   },
 };
 </script>

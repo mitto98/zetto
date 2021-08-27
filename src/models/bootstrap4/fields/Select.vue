@@ -1,6 +1,9 @@
 <template>
   <div class="form-group">
-    <label :for="id">{{ label }} {{ required ? '*' : '' }}</label>
+    <label :for="id">
+      {{ label }}
+      <span v-if="required" aria-hidden="true">*</span>
+    </label>
     <select
       :id="id"
       :name="id"

@@ -1,6 +1,9 @@
 <template>
   <div class="form-group">
-    <label :for="id">{{ label }}</label>
+    <label :for="id">
+      {{ label }}
+      <span v-if="required" aria-hidden="true">*</span>
+    </label>
     <date-picker :value="value" @input="(x) => $emit('input', x)">
       <template v-slot="{ inputValue, inputEvents }">
         <input

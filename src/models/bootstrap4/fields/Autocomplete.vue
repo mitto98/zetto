@@ -1,10 +1,13 @@
 <template>
   <div class="form-group">
-    <label :for="id">{{ label }}</label>
+    <label :for="id">
+      {{ label }}
+      <span v-if="required" aria-hidden="true">*</span>
+    </label>
     <v-select
       :id="id"
       :name="id"
-      :value="value"
+      :value="value.toString()"
       :options="paginated"
       :reduce="(c) => c.value"
       :filterable="false"
@@ -35,6 +38,7 @@ export default {
     type: { type: String, default: 'text' },
     value: { required: true },
     options: { type: Array },
+    required: { type: Boolean, default: false },
     trans: { type: Function, required: true },
   },
   data: () => ({
