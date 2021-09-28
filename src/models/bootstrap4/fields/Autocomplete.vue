@@ -7,7 +7,7 @@
     <v-select
       :id="id"
       :name="id"
-      :value="value.toString()"
+      :value="`${value}`"
       :options="paginated"
       :reduce="(c) => c.value"
       :filterable="false"
