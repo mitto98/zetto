@@ -1,16 +1,22 @@
 <template>
   <form @submit.prevent="handleSubmit" autocomplete="off">
     <h1 v-if="title" class="mb-2">{{ elementTitle }}</h1>
-    <component
-      v-for="fs in schema"
-      :key="fs.name"
-      :is="getFieldComponent(fs.type)"
-      :id="fs.name"
-      :value="value[fs.name]"
-      :trans="$trans"
-      v-bind="fs"
-      @input="(val) => handleFieldInput(fs.name, val)"
-    />
+    <div v-for="field in schema" :key="field.name">
+      <slot
+        :name="`field(${field.name})`"
+        :value="value[field.name]"
+        :handleInput="(val) => handleFieldInput(field.name, val)"
+      >
+        <component
+          :is="getFieldComponent(field.type)"
+          :id="field.name"
+          :value="value[field.name]"
+          :trans="$trans"
+          v-bind="field"
+          @input="(val) => handleFieldInput(field.name, val)"
+        />
+      </slot>
+    </div>
 
     <Button type="submit" variant="primary" :label="submitLabel || 'Salva'" />
     <Button v-for="(btn, i) in buttons" :key="i" v-bind="btn" />

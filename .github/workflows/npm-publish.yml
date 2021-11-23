@@ -1,28 +1,76 @@
-name: Build and publish
+name: Release new version
 
 on:
-  push:
-    branches: [main]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version (major, minor & patch)'
+        required: true
+        default: 'minor'
 
 jobs:
-  publish-npm:
+  release:
+    name: Bump version
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: actions/checkout@v2.4.0
         with:
-          node-version: '14'
-          cache: 'npm'
-
-      - name: Update npm
-        run: npm install -g npm@latest
-
+          fetch-depth: 0
+          ref: develop
+      - name: Setup git
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git checkout -B release/${{ github.event.inputs.version }}
+      - uses: actions/setup-node@v2.4.1
+        with:
+          node-version: '16'
+      - run: npm version ${{ github.event.inputs.version }}
+      - name: Get npm version
+        id: package-version
+        uses: martinbeentjes/npm-get-version-action@master
+      - run: echo "TODO - Generate chagnelog"
+      - name: Commit changes
+        run: |
+          git add .
+          git commit -m "Release ${{steps.package-version.outputs.current-version}}"
+          git push
+  # TODO - Test
+  build-and-publish:
+    name: Build and publish
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2.4.0
+      - uses: actions/setup-node@v2.4.1
+        with:
+          node-version: '16'
       - name: Install dependencies
         run: npm ci
-
       - name: Build project
         run: npm run build
-
       - uses: JS-DevTools/npm-publish@v1
         with:
           token: ${{ secrets.NPM_TOKEN }}
+  # TODO - Publish docs
+  create_release:
+    name: Create release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2.4.0
+      - name: Get npm version
+        id: package-version
+        uses: martinbeentjes/npm-get-version-action@master
+      - name: Extract release notes
+        id: extract_release_notes
+        uses: ffurrer2/extract-release-notes@v1
+      - name: Create GitHub Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          tag_name: ${{ steps.package-version.outputs.current-version }}
+          release_name: v${{ steps.package-version.outputs.current-version }}
+          body: ${{ steps.extract_release_notes.outputs.release_notes }}
+          draft: false
+          prerelease: false
