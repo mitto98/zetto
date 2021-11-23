@@ -9,38 +9,46 @@ on:
         default: 'minor'
 
 jobs:
+  # TODO - Test
+
   release:
     name: Bump version
     runs-on: ubuntu-latest
+    outputs:
+      commit: ${{ steps.push.outputs.SHA }}
     steps:
       - uses: actions/checkout@v2.4.0
         with:
           fetch-depth: 0
-          ref: develop
       - name: Setup git
         run: |
           git config user.name github-actions
           git config user.email github-actions@github.com
-          git checkout -B release/${{ github.event.inputs.version }}
       - uses: actions/setup-node@v2.4.1
         with:
           node-version: '16'
-      - run: npm version ${{ github.event.inputs.version }}
+      - run: npm --no-git-tag-version version ${{ github.event.inputs.version }}
       - name: Get npm version
         id: package-version
         uses: martinbeentjes/npm-get-version-action@master
       - run: echo "TODO - Generate chagnelog"
       - name: Commit changes
+        id: push
         run: |
           git add .
           git commit -m "Release ${{steps.package-version.outputs.current-version}}"
           git push
-  # TODO - Test
+          echo "::set-output name=SHA::$(git rev-parse HEAD)"
+
   build-and-publish:
     name: Build and publish
     runs-on: ubuntu-latest
+    needs: release
     steps:
       - uses: actions/checkout@v2.4.0
+        with:
+          ref: ${{ needs.release.outputs.commit }}
+          fetch-depth: 0
       - uses: actions/setup-node@v2.4.1
         with:
           node-version: '16'
@@ -51,18 +59,22 @@ jobs:
       - uses: JS-DevTools/npm-publish@v1
         with:
           token: ${{ secrets.NPM_TOKEN }}
+
   # TODO - Publish docs
+
   create_release:
     name: Create release
     runs-on: ubuntu-latest
+    needs: build-and-publish
     steps:
       - uses: actions/checkout@v2.4.0
-      - name: Get npm version
-        id: package-version
+        with:
+          ref: ${{ needs.release.outputs.SHA }}
+          fetch-depth: 0
+      - id: package-version
         uses: martinbeentjes/npm-get-version-action@master
-      - name: Extract release notes
-        id: extract_release_notes
-        uses: ffurrer2/extract-release-notes@v1
+      # - id: extract_release_notes
+      #   uses: ffurrer2/extract-release-notes@v1
       - name: Create GitHub Release
         id: create_release
         uses: actions/create-release@v1
@@ -71,6 +83,6 @@ jobs:
         with:
           tag_name: ${{ steps.package-version.outputs.current-version }}
           release_name: v${{ steps.package-version.outputs.current-version }}
-          body: ${{ steps.extract_release_notes.outputs.release_notes }}
+          # body: ${{ steps.extract_release_notes.outputs.release_notes }}
           draft: false
           prerelease: false
