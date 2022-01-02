@@ -1,4 +1,18 @@
-# 0.3.0 (2021-11-28)
+# [0.4.0](https://github.com/mitto98/zetto/compare/v0.3.0...v0.4.0) (2022-01-02)
+
+
+### Bug Fixes
+
+* hide title when title is falsy ([f508704](https://github.com/mitto98/zetto/commit/f508704cb20b5e644faf6d2bc8bf555853cfd14c))
+
+
+### Features
+
+* defineConfig function ([df87cd7](https://github.com/mitto98/zetto/commit/df87cd7711d82804761ed56994c3e87d3ef21277))
+
+
+
+# [0.3.0](https://github.com/mitto98/zetto/compare/e426c0c90c24eef4db7b29dca774841fa227b3ec...v0.3.0) (2021-11-28)
 
 
 ### Bug Fixes
