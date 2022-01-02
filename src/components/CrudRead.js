@@ -47,7 +47,7 @@ export default {
   render(h) {
     if (this.loading) return h('p', this.$trans('zetto.search.loading'));
     return h('div', [
-      h('h1', this.elementTitle),
+      this.title && h('h1', this.elementTitle),
       h(Detail, {
         props: {
           fields: this.tableFields,
