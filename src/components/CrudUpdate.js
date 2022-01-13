@@ -1,39 +1,12 @@
-<template>
-  <form @submit.prevent="handleSubmit" autocomplete="off">
-    <h1 v-if="title" class="mb-2">{{ elementTitle }}</h1>
-    <div v-for="field in schema" :key="field.name">
-      <slot
-        :name="`field(${field.name})`"
-        :value="value[field.name]"
-        :handleInput="(val) => handleFieldInput(field.name, val)"
-      >
-        <component
-          :is="getFieldComponent(field.type)"
-          :id="field.name"
-          :value="value[field.name]"
-          :trans="$trans"
-          v-bind="field"
-          @input="(val) => handleFieldInput(field.name, val)"
-        />
-      </slot>
-    </div>
-
-    <Button type="submit" variant="primary" :label="submitLabel || 'Salva'" />
-    <Button v-for="(btn, i) in buttons" :key="i" v-bind="btn" />
-  </form>
-</template>
-
-<script>
 import { mergeComponentFields } from '../lib/fields';
 import { buildForm } from '../lib/forms/formFields';
 import titledMixin, { titledMixinProps } from '../mixins/titledMixin';
 import translatorMixin from '../mixins/translatorMixin';
-import { Button, FormFields } from '../models/bootstrap4';
+import modelMixin, { modelMixinProps } from '../mixins/modelMixin';
 
 export default {
   name: 'CrudUpdate',
-  components: { Button },
-  mixins: [titledMixin, translatorMixin],
+  mixins: [titledMixin, translatorMixin, modelMixin],
   props: {
     action: { type: Object, required: true },
     fields: { type: Object, default: () => ({}) },
@@ -41,6 +14,7 @@ export default {
     entity: { type: [String, Number], required: true },
     buttons: { type: Array, default: () => [] },
     ...titledMixinProps,
+    ...modelMixinProps,
     validate: { type: Function }, // (data: any) => any
   },
   data: () => ({
@@ -52,9 +26,6 @@ export default {
     this.fetchData();
   },
   methods: {
-    getFieldComponent(type) {
-      return FormFields[type] || FormFields.string;
-    },
     handleFieldInput(fieldName, value) {
       this.value = { ...this.value, [fieldName]: value };
     },
@@ -74,13 +45,57 @@ export default {
 
       this.isLoading = false;
     },
-    async handleSubmit() {
+    async handleSubmit(event) {
       this.isLoading = true;
+      event.preventDefault();
       const value = this.validate ? this.validate(this.value) : this.value;
       const entity = await this.action.update(this.entity, value);
       this.$emit('submit', entity);
       this.isLoading = false;
     },
   },
+  render(h) {
+    const button = this.getModelComponent('button');
+    const getFieldNode = (field) => {
+      const slot = this.$scopedSlots[`field(${field.name})`]?.({
+        value: this.value[field.name],
+        handleInput: (val) => this.handleFieldInput(field.name, val),
+      });
+      if (slot) return slot;
+      return h(this.getModelField(field.type), {
+        id: field.name,
+        props: {
+          id: field.name,
+          ...field,
+          value: this.value[field.name],
+          trans: this.$trans,
+        },
+        on: {
+          input: (val) => this.handleFieldInput(field.name, val),
+        },
+      });
+    };
+
+    return h(
+      'form',
+      {
+        autocomplete: 'off',
+        on: { submit: this.handleSubmit },
+      },
+      [
+        this.title && h('h1', this.elementTitle),
+        this.schema.map((field) =>
+          h('div', { key: field.name }, [getFieldNode(field)])
+        ),
+        h(button, {
+          props: {
+            type: 'submit',
+            variant: 'primary',
+            label: this.submitLabel || 'Crea',
+          },
+        }),
+        this.buttons.map((btn, i) => h(button, { key: i, props: btn })),
+      ]
+    );
+  },
 };
-</script>

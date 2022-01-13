@@ -8,8 +8,8 @@ export async function lazyPromise<T>(promise: Promise<T>): Promise<T> {
   return res;
 }
 
-export function mergeDeep(source: any, update: any): any {
-  return merge({}, source, update);
+export function mergeDeep<T>(source: T, update: Partial<T>): T {
+  return merge<{}, T, Partial<T>>({}, source, update);
 }
 
 export function accessDotPath(key: string, map: any): any {

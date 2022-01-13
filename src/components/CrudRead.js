@@ -2,18 +2,19 @@ import { mergeComponentFields } from '../lib/fields';
 import titledMixin, { titledMixinProps } from '../mixins/titledMixin';
 import listenOnRoot from '../mixins/listenOnRoot';
 import translatorMixin from '../mixins/translatorMixin';
+import modelMixin, { modelMixinProps } from '../mixins/modelMixin';
 import { EVENT_NAME_REFRESH_DATA } from '../constants/events';
-import { Detail } from '../models/bootstrap4';
 
 export default {
   name: 'CrudRead',
-  mixins: [titledMixin, listenOnRoot, translatorMixin],
+  mixins: [titledMixin, listenOnRoot, translatorMixin, modelMixin],
   props: {
     id: { type: String },
     action: { type: [Object, String], required: true },
     fields: { type: Object, default: () => ({}) },
     entity: { type: [Object, String, Number], required: true },
     ...titledMixinProps,
+    ...modelMixinProps,
   },
   data: () => ({
     loading: false,
@@ -48,7 +49,7 @@ export default {
     if (this.loading) return h('p', this.$trans('zetto.search.loading'));
     return h('div', [
       this.title && h('h1', this.elementTitle),
-      h(Detail, {
+      h(this.getModelComponent('detail'), {
         props: {
           fields: this.tableFields,
           item: this.item,

@@ -1,4 +1,3 @@
-import Vue from 'vue';
 import { VueConstructor } from 'vue/types/umd';
 import * as components from './components';
 import defaultConfig from './defaultConfig';
@@ -25,6 +24,9 @@ export default function installZetto(Vue: VueConstructor, options: any) {
   });
 }
 
-export function defineConfig(config: Partial<Config>) {
-  return mergeDeep(defaultConfig, config);
+export function defineConfig(config: Partial<Config>): Config {
+  return mergeDeep<Config>(defaultConfig, config);
 }
+
+export { default as Bootstrap4 } from './models/bootstrap4';
+export { default as Bootstrap5 } from './models/bootstrap5';

@@ -1,17 +1,15 @@
-import Vue from 'vue';
 import { EVENT_NAME_REFRESH_DATA } from '../constants/events';
 import titledMixin, { titledMixinProps } from '../mixins/titledMixin';
 import listenOnRoot from '../mixins/listenOnRoot';
 import translatorMixin from '../mixins/translatorMixin';
+import modelMixin, { modelMixinProps } from '../mixins/modelMixin';
+import SearchFilter from './search/SearchFilter';
 import { mergeComponentFields } from '../lib/fields';
 import { lazyPromise } from '../lib/utils';
-import SearchFilter from './search/SearchFilter.vue';
-
-import { Table, Pagination, Button } from '../models/bootstrap4';
 
 export default {
   name: 'CrudSearch',
-  mixins: [titledMixin, listenOnRoot, translatorMixin],
+  mixins: [titledMixin, listenOnRoot, translatorMixin, modelMixin],
   props: {
     id: { type: String },
     action: { type: Object, required: true },
@@ -27,6 +25,7 @@ export default {
     buttons: { type: Array, default: () => [] },
     headEnabled: { type: Boolean, default: true },
     ...titledMixinProps,
+    ...modelMixinProps,
   },
   data: () => ({
     loading: false,
@@ -128,10 +127,11 @@ export default {
             action: this.action,
             fields: this.searchFields,
             expanded: this.expanded,
+            model: this.model,
           },
           on: { search: this.doSearch },
         }),
-      h(Table, {
+      h(this.getModelComponent('table'), {
         props: {
           fields: this.tableFields,
           items: this.items,
@@ -153,14 +153,14 @@ export default {
         h(
           'div',
           this.buttons.map((btn) =>
-            h(Button, {
+            h(this.getModelComponent('button'), {
               key: btn.label,
               props: btn,
             })
           )
         ),
         this.action.totalRecords > this.pageSize &&
-          h(Pagination, {
+          h(this.getModelComponent('pagination'), {
             props: {
               value: this.currentPage,
               totalRows: this.action.totalRecords,
