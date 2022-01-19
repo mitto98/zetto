@@ -1,3 +1,12 @@
+# [0.5.0](https://github.com/mitto98/zetto/compare/v0.4.0...v0.5.0) (2022-01-19)
+
+
+### Features
+
+* basic models configuration ([0b58eeb](https://github.com/mitto98/zetto/commit/0b58eebe37c3cc0430d3569c70755d9756dcab69))
+
+
+
 # [0.4.0](https://github.com/mitto98/zetto/compare/v0.3.0...v0.4.0) (2022-01-02)
 
 
