@@ -23,9 +23,9 @@
     "vue": "^2.6"
   },
   "dependencies": {
-    "@manydesigns/portofino": "^1.7.1",
+    "@manydesigns/portofino": "^1.9.0",
     "lodash": "^4.17",
-    "v-calendar": "^2.3.2",
+    "v-calendar": "^2.3.4",
     "vue-select": "^3.12.2"
   },
   "devDependencies": {
