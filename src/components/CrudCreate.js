@@ -48,6 +48,7 @@ export default {
       const value = this.validate ? this.validate(this.value) : this.value;
       const entity = await this.action.create(value);
       this.$emit('submit', entity);
+      this.$emit('created', entity);
       this.isLoading = false;
     },
   },

@@ -51,6 +51,7 @@ export default {
       const value = this.validate ? this.validate(this.value) : this.value;
       const entity = await this.action.update(this.entity, value);
       this.$emit('submit', entity);
+      this.$emit('updated', entity);
       this.isLoading = false;
     },
   },
