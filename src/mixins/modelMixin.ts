@@ -6,7 +6,9 @@ export default {
       return this.model || 'default';
     },
     modelComponents() {
-      return this.$zetto.options.models[this.activeModel];
+      const model = this.$zetto.options.models[this.activeModel];
+      if (!model) throw new Error(`Unknown model: ${this.activeModel}`);
+      return model;
     },
   },
   methods: {
