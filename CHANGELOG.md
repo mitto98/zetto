@@ -1,3 +1,20 @@
+# [0.6.0](https://github.com/mitto98/zetto/compare/v0.5.0...v0.6.0) (2022-02-09)
+
+
+### Bug Fixes
+
+* **deps:** updated dependencies ([86f3bae](https://github.com/mitto98/zetto/commit/86f3bae55dc61f9f2b1ad678350e123290f0bbed))
+* **fields:** added textarea ([3496be8](https://github.com/mitto98/zetto/commit/3496be89f90334c43a3b86e82df03e818be81536))
+* throw an error if model is not defined ([ea488e4](https://github.com/mitto98/zetto/commit/ea488e46deec9ba195a45663145105ed0bc22a62))
+
+
+### Features
+
+* created and updated event ([9cc03d0](https://github.com/mitto98/zetto/commit/9cc03d0d7cc7caa6babda2d474b80984e65f9377))
+* spreaded field config to html input element ([578abe6](https://github.com/mitto98/zetto/commit/578abe6a991bbd0436086bfa82cf2664690bbd22))
+
+
+
 # [0.5.0](https://github.com/mitto98/zetto/compare/v0.4.0...v0.5.0) (2022-01-19)
 
 
