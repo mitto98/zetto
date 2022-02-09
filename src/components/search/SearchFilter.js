@@ -53,7 +53,7 @@ export default {
       },
       [
         this.schema.map((field) =>
-          h('div', { key: field.name }, [
+          h('div', { key: field.name, class: 'col-md-6' }, [
             h(this.getModelField(field.type), {
               id: field.name,
               props: {
