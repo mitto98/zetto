@@ -10,6 +10,7 @@
       :value="value"
       :required="required"
       :rows="rows"
+      v-bind="$props"
       class="form-control"
       @input="$emit('input', $event.target.value)"
     />

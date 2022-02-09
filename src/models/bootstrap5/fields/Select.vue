@@ -9,6 +9,7 @@
       :name="id"
       :value="value"
       :required="required"
+      v-bind="$props"
       class="form-control"
       @input="$emit('input', $event.target.value)"
     >
