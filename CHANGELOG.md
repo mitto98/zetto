@@ -1,3 +1,13 @@
+## [0.6.1](https://github.com/mitto98/zetto/compare/v0.6.0...v0.6.1) (2022-02-09)
+
+
+### Bug Fixes
+
+* added col class to filter form inputs ([52710f7](https://github.com/mitto98/zetto/commit/52710f724609c53d5bff3b6a98c118f0f38be23e))
+* v-bind in input fields ([a42b1e8](https://github.com/mitto98/zetto/commit/a42b1e85c8bf293b83a4b66a2cacde45320e1958))
+
+
+
 # [0.6.0](https://github.com/mitto98/zetto/compare/v0.5.0...v0.6.0) (2022-02-09)
 
 
