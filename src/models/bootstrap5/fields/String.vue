@@ -10,7 +10,7 @@
       :name="id"
       :value="value"
       :required="required"
-      v-bind="$props"
+      v-bind.prop="$attrs"
       class="form-control"
       @input="$emit('input', $event.target.value)"
     />
@@ -19,6 +19,7 @@
 
 <script>
 export default {
+  inheritAttrs: false,
   props: {
     id: { type: String, required: true },
     label: { type: String, required: true },

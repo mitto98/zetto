@@ -63,8 +63,10 @@ export default {
         handleInput: (val) => this.handleFieldInput(field.name, val),
       });
       if (slot) return slot;
+      const { type, value, required, ...attrs } = field;
       return h(this.getModelField(field.type), {
         id: field.name,
+        attrs: { ...attrs },
         props: {
           id: field.name,
           ...field,
