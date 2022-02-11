@@ -1,3 +1,12 @@
+## [0.6.3](https://github.com/mitto98/zetto/compare/v0.6.2...v0.6.3) (2022-02-11)
+
+
+### Bug Fixes
+
+* removed copy-paste typo ([a469df0](https://github.com/mitto98/zetto/commit/a469df059b0c26eb03204255cc69b3984f8e9072))
+
+
+
 ## [0.6.2](https://github.com/mitto98/zetto/compare/v0.6.1...v0.6.2) (2022-02-09)
 
 
@@ -40,20 +49,6 @@
 ### Features
 
 * basic models configuration ([0b58eeb](https://github.com/mitto98/zetto/commit/0b58eebe37c3cc0430d3569c70755d9756dcab69))
-
-
-
-# [0.4.0](https://github.com/mitto98/zetto/compare/v0.3.0...v0.4.0) (2022-01-02)
-
-
-### Bug Fixes
-
-* hide title when title is falsy ([f508704](https://github.com/mitto98/zetto/commit/f508704cb20b5e644faf6d2bc8bf555853cfd14c))
-
-
-### Features
-
-* defineConfig function ([df87cd7](https://github.com/mitto98/zetto/commit/df87cd7711d82804761ed56994c3e87d3ef21277))
 
 
 
