@@ -49,7 +49,6 @@ export default {
       {
         autocomplete: 'off',
         class: 'form-row my-3',
-        on: { submit: this.handleSubmit },
       },
       [
         this.schema.map((field) =>
