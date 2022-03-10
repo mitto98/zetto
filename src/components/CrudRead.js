@@ -42,6 +42,7 @@ export default {
       if (this.entity._isPortofinoEntity) return;
       this.loading = true;
       this.loadedItem = await this.action.get(this.entity);
+      this.$emit('loaded', entity);
       this.loading = false;
     },
   },

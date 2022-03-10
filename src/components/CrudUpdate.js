@@ -34,6 +34,7 @@ export default {
       this.isLoading = true;
 
       const entity = await this.action.get(this.entity);
+      this.$emit('loaded', entity);
       this.value = entity.toObject();
 
       let fields = mergeComponentFields(

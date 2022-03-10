@@ -94,6 +94,7 @@ export default {
 
       try {
         this.items = await lazyPromise(this.action.search(searchParams));
+        this.$emit('loaded', this.items);
       } catch (e) {
         this.error = 'Errore, impossibile caricaricare i dati!';
       }
