@@ -1,3 +1,12 @@
+# [0.7.0](https://github.com/mitto98/zetto/compare/v0.6.3...v0.7.0) (2022-03-10)
+
+
+### Features
+
+* emitted loaded event ([fe12769](https://github.com/mitto98/zetto/commit/fe1276910a776c90b9e99f4968ba73c665f00429))
+
+
+
 ## [0.6.3](https://github.com/mitto98/zetto/compare/v0.6.2...v0.6.3) (2022-02-11)
 
 
@@ -40,15 +49,6 @@
 
 * created and updated event ([9cc03d0](https://github.com/mitto98/zetto/commit/9cc03d0d7cc7caa6babda2d474b80984e65f9377))
 * spreaded field config to html input element ([578abe6](https://github.com/mitto98/zetto/commit/578abe6a991bbd0436086bfa82cf2664690bbd22))
-
-
-
-# [0.5.0](https://github.com/mitto98/zetto/compare/v0.4.0...v0.5.0) (2022-01-19)
-
-
-### Features
-
-* basic models configuration ([0b58eeb](https://github.com/mitto98/zetto/commit/0b58eebe37c3cc0430d3569c70755d9756dcab69))
 
 
 
