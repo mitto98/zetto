@@ -16,6 +16,17 @@ jobs:
           git-user-name: github-actions
           git-user-email: github-actions@github.com
 
+      - name: Setup node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+
+      - run: |
+          git add .
+          git commit -m "Release ${{ steps.changelog.outputs.version }}"
+          git tag -a ${{ steps.changelog.outputs.tag }} -m "version ${{ steps.changelog.outputs.version }}"
+          git push --all
+
       - name: Create Release
         uses: actions/create-release@v1
         if: ${{ steps.changelog.outputs.skipped == 'false' }}
