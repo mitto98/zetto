@@ -4,14 +4,18 @@
   "description": "A pragmatic crud component headless interface",
   "author": "Mattia Dapino <mattia.dapino@hey.com>",
   "license": "MIT",
-  "main": "./dist/zetto.umd.js",
-  "module": "./dist/zetto.es.js",
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/zetto.umd.cjs",
+  "module": "./dist/zetto.js",
   "exports": {
     ".": {
-      "import": "./dist/zetto.es.js",
-      "require": "./dist/zetto.umd.js"
+      "import": "./dist/zetto.js",
+      "require": "./dist/zetto.umd.cjs"
     },
-    "./nuxt": "./nuxt/index.js"
+    "./nuxt": "./nuxt/index.ts"
   },
   "scripts": {
     "dev": "vite build --watch -m development",
@@ -20,21 +24,23 @@
     "prepare": "husky install"
   },
   "peerDependencies": {
-    "vue": "^2.6"
+    "vue": "^3.2.37"
   },
   "dependencies": {
     "@manydesigns/portofino": "^1.9.0",
     "lodash": "^4.17",
-    "v-calendar": "^2.3.4",
-    "vue-select": "^3.12.2"
+    "v-calendar": "next"
   },
   "devDependencies": {
     "@commitlint/cli": "^15.0.0",
     "@commitlint/config-conventional": "^15.0.0",
+    "@nuxt/kit": "^3.0.0-rc.6",
     "@types/lodash": "^4.14.170",
+    "@types/node": "^18.6.1",
+    "@vitejs/plugin-vue": "^3.0.1",
     "husky": "^8.0.1",
     "typescript": "^4.3.5",
-    "vite": "^2.2.3",
-    "vite-plugin-vue2": "^1.5.1"
+    "vite": "^3.0.2",
+    "vite-plugin-dts": "^1.4.0"
   }
 }

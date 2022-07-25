@@ -1,3 +1,4 @@
+import { h } from 'vue';
 import { mergeComponentFields } from '../lib/fields';
 import { buildForm } from '../lib/forms/formFields';
 import titledMixin, { titledMixinProps } from '../mixins/titledMixin';
@@ -56,7 +57,7 @@ export default {
       this.isLoading = false;
     },
   },
-  render(h) {
+  render() {
     const button = this.getModelComponent('button');
     const getFieldNode = (field) => {
       const slot = this.$scopedSlots[`field(${field.name})`]?.({

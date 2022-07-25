@@ -1,3 +1,4 @@
+import { h } from 'vue';
 import { debounce } from 'lodash';
 import translatorMixin from '../../mixins/translatorMixin';
 import modelMixin, { modelMixinProps } from '../../mixins/modelMixin';
@@ -39,7 +40,7 @@ export default {
       this.schema = await buildSearchForm(this.action, fields);
     },
   },
-  render(h) {
+  render() {
     if (!this.schema || !this.expanded) return;
 
     const button = this.getModelComponent('button');

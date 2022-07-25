@@ -1,3 +1,4 @@
+import { h } from 'vue';
 import { EVENT_NAME_REFRESH_DATA } from '../constants/events';
 import titledMixin, { titledMixinProps } from '../mixins/titledMixin';
 import listenOnRoot from '../mixins/listenOnRoot';
@@ -102,7 +103,7 @@ export default {
       this.loading = false;
     },
   },
-  render(h) {
+  render() {
     const title = h('h1', [
       this.elementTitle,
       this.search &&

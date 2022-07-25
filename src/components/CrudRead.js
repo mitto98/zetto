@@ -1,3 +1,4 @@
+import { h } from 'vue';
 import { mergeComponentFields } from '../lib/fields';
 import titledMixin, { titledMixinProps } from '../mixins/titledMixin';
 import listenOnRoot from '../mixins/listenOnRoot';
@@ -46,7 +47,7 @@ export default {
       this.loading = false;
     },
   },
-  render(h) {
+  render() {
     if (this.loading) return h('p', this.$trans('zetto.search.loading'));
     return h('div', [
       this.title && h('h1', this.elementTitle),

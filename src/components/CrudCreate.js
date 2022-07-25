@@ -1,3 +1,4 @@
+import { h } from 'vue';
 import titledMixin, { titledMixinProps } from '../mixins/titledMixin';
 import translatorMixin from '../mixins/translatorMixin';
 import modelMixin, { modelMixinProps } from '../mixins/modelMixin';
@@ -52,7 +53,7 @@ export default {
       this.isLoading = false;
     },
   },
-  render(h) {
+  render() {
     const button = this.getModelComponent('button');
     const getFieldNode = (field) => {
       const slot = this.$scopedSlots[`field(${field.name})`]?.({

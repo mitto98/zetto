@@ -1,13 +1,13 @@
-import { VueConstructor } from 'vue';
+import { ComponentPublicInstance } from 'vue';
 
 export default interface Model {
-  table: VueConstructor;
-  pagination: VueConstructor;
-  detail: VueConstructor;
-  button: VueConstructor;
+  table: ComponentPublicInstance;
+  pagination: ComponentPublicInstance;
+  detail: ComponentPublicInstance;
+  button: ComponentPublicInstance;
 
   formFields: {
-    string: VueConstructor;
-    [key: string]: VueConstructor;
+    string: ComponentPublicInstance;
+    [key: string]: ComponentPublicInstance;
   };
 }

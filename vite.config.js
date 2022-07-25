@@ -1,7 +1,10 @@
-const path = require('path');
-const { createVuePlugin } = require('vite-plugin-vue2');
+import path from 'path';
+import { defineConfig } from 'vite';
+import vue from '@vitejs/plugin-vue';
+import dts from 'vite-plugin-dts';
 
-module.exports = {
+// https://vitejs.dev/config/
+export default defineConfig({
   resolve: {
     alias: [
       {
@@ -10,21 +13,27 @@ module.exports = {
       },
     ],
   },
-  plugins: [createVuePlugin()],
+  plugins: [dts(), vue()],
   build: {
     sourcemap: true,
     emptyOutDir: false,
+    // Reduce bloat from legacy polyfills.
+    target: 'esnext',
+    // Leave minification up to applications.
+    minify: false,
     lib: {
       entry: path.resolve(__dirname, 'src/index.ts'),
-      name: 'Zetto',
+      name: 'zetto',
     },
     rollupOptions: {
-      external: ['vue'],
+      external: ['vue', 'lodash'],
       output: {
+        exports: 'named',
         globals: {
           vue: 'Vue',
+          lodash: 'lodash',
         },
       },
     },
   },
-};
+});
