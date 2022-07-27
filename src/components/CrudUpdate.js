@@ -1,20 +1,18 @@
 import { h } from 'vue';
 import { mergeComponentFields } from '../lib/fields';
 import { buildForm } from '../lib/forms/formFields';
-import titledMixin, { titledMixinProps } from '../mixins/titledMixin';
 import translatorMixin from '../mixins/translatorMixin';
 import modelMixin, { modelMixinProps } from '../mixins/modelMixin';
 
 export default {
   name: 'CrudUpdate',
-  mixins: [titledMixin, translatorMixin, modelMixin],
+  mixins: [translatorMixin, modelMixin],
   props: {
     action: { type: Object, required: true },
     fields: { type: Object, default: () => ({}) },
     submitLabel: { type: String },
     entity: { type: [String, Number], required: true },
     buttons: { type: Array, default: () => [] },
-    ...titledMixinProps,
     ...modelMixinProps,
     validate: { type: Function }, // (data: any) => any
   },
@@ -88,7 +86,6 @@ export default {
         on: { submit: this.handleSubmit },
       },
       [
-        this.title && h('h1', this.elementTitle),
         this.schema.map((field) =>
           h('div', { key: field.name }, [getFieldNode(field)])
         ),

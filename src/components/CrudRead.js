@@ -1,6 +1,5 @@
 import { h } from 'vue';
 import { mergeComponentFields } from '../lib/fields';
-import titledMixin, { titledMixinProps } from '../mixins/titledMixin';
 import listenOnRoot from '../mixins/listenOnRoot';
 import translatorMixin from '../mixins/translatorMixin';
 import modelMixin, { modelMixinProps } from '../mixins/modelMixin';
@@ -8,13 +7,12 @@ import { EVENT_NAME_REFRESH_DATA } from '../constants/events';
 
 export default {
   name: 'CrudRead',
-  mixins: [titledMixin, listenOnRoot, translatorMixin, modelMixin],
+  mixins: [listenOnRoot, translatorMixin, modelMixin],
   props: {
     id: { type: String },
     action: { type: [Object, String], required: true },
     fields: { type: Object, default: () => ({}) },
     entity: { type: [Object, String, Number], required: true },
-    ...titledMixinProps,
     ...modelMixinProps,
   },
   data: () => ({
@@ -49,16 +47,13 @@ export default {
   },
   render() {
     if (this.loading) return h('p', this.$trans('zetto.search.loading'));
-    return h('div', [
-      this.title && h('h1', this.elementTitle),
-      h(this.getModelComponent('detail'), {
-        props: {
-          fields: this.tableFields,
-          item: this.item,
-          loading: this.loading,
-        },
-        scopedSlots: this.$scopedSlots,
-      }),
-    ]);
+    return h(this.getModelComponent('detail'), {
+      props: {
+        fields: this.tableFields,
+        item: this.item,
+        loading: this.loading,
+      },
+      scopedSlots: this.$scopedSlots,
+    });
   },
 };

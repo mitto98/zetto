@@ -1,6 +1,5 @@
 import { h } from 'vue';
 import { EVENT_NAME_REFRESH_DATA } from '../constants/events';
-import titledMixin, { titledMixinProps } from '../mixins/titledMixin';
 import listenOnRoot from '../mixins/listenOnRoot';
 import translatorMixin from '../mixins/translatorMixin';
 import modelMixin, { modelMixinProps } from '../mixins/modelMixin';
@@ -10,7 +9,7 @@ import { lazyPromise } from '../lib/utils';
 
 export default {
   name: 'CrudSearch',
-  mixins: [titledMixin, listenOnRoot, translatorMixin, modelMixin],
+  mixins: [listenOnRoot, translatorMixin, modelMixin],
   props: {
     id: { type: String },
     action: { type: Object, required: true },
@@ -25,7 +24,6 @@ export default {
     // filters: { type: Object },
     buttons: { type: Array, default: () => [] },
     headEnabled: { type: Boolean, default: true },
-    ...titledMixinProps,
     ...modelMixinProps,
   },
   data: () => ({
@@ -104,25 +102,20 @@ export default {
     },
   },
   render() {
-    const title = h('h1', [
-      this.elementTitle,
-      this.search &&
-        h(
-          'button',
-          {
-            class: 'btn btn-link',
-            on: {
-              click: () => {
-                this.expanded = !this.expanded;
-              },
-            },
-          },
-          [this.$trans('zetto.search.filter')]
-        ),
-    ]);
+    // this.search && h(
+    //   'button',
+    //   {
+    //     class: 'btn btn-link',
+    //     on: {
+    //       click: () => {
+    //         this.expanded = !this.expanded;
+    //       },
+    //     },
+    //   },
+    //   [this.$trans('zetto.search.filter')]
+    // ),
 
     return h('div', [
-      this.title && title,
       this.search &&
         h(SearchFilter, {
           props: {

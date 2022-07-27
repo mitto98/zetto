@@ -1,5 +1,4 @@
 import { h } from 'vue';
-import titledMixin, { titledMixinProps } from '../mixins/titledMixin';
 import translatorMixin from '../mixins/translatorMixin';
 import modelMixin, { modelMixinProps } from '../mixins/modelMixin';
 import { buildForm } from '../lib/forms/formFields';
@@ -7,13 +6,12 @@ import { mergeComponentFields } from '../lib/fields';
 
 export default {
   name: 'CrudCreate',
-  mixins: [titledMixin, translatorMixin, modelMixin],
+  mixins: [translatorMixin, modelMixin],
   props: {
     action: { type: Object, required: true },
     fields: { type: Object, default: () => ({}) }, // AttributesConfig with defaultValue field
     submitLabel: { type: String },
     buttons: { type: Array, default: () => [] },
-    ...titledMixinProps,
     ...modelMixinProps,
     validate: { type: Function }, // (data: any) => any
   },
@@ -84,7 +82,6 @@ export default {
         on: { submit: this.handleSubmit },
       },
       [
-        this.title && h('h1', this.elementTitle),
         this.schema.map((field) =>
           h('div', { key: field.name }, [getFieldNode(field)])
         ),
