@@ -1,18 +1,17 @@
 import { h } from 'vue';
-import { EVENT_NAME_REFRESH_DATA } from '../constants/events';
-import listenOnRoot from '../mixins/listenOnRoot';
 import translatorMixin from '../mixins/translatorMixin';
 import modelMixin, { modelMixinProps } from '../mixins/modelMixin';
 import SearchFilter from './search/SearchFilter';
 import { mergeComponentFields } from '../lib/fields';
 import { lazyPromise } from '../lib/utils';
+import GuidamiBroker from '../dataBrokers/GuidamiBroker';
 
 export default {
   name: 'CrudSearch',
-  mixins: [listenOnRoot, translatorMixin, modelMixin],
+  mixins: [translatorMixin, modelMixin],
   props: {
     id: { type: String },
-    action: { type: Object, required: true },
+    action: { type: Object, required: false },
     fields: { type: Object, default: () => ({}) },
     searchFields: { type: Object, default: () => ({}) },
     search: { type: [Boolean, String], default: false },
@@ -22,25 +21,28 @@ export default {
     // createLabel: { type: String },
     // sort: { type: Object },
     // filters: { type: Object },
+    showFilters: { type: Boolean, default: false },
     buttons: { type: Array, default: () => [] },
     headEnabled: { type: Boolean, default: true },
     ...modelMixinProps,
   },
   data: () => ({
+    dataBroker: null,
     loading: false,
     items: [],
     currentPage: 1,
     formFilters: null,
     sort: null,
     error: '',
-    expanded: false,
   }),
-
   mounted() {
-    this.listenOnRoot(EVENT_NAME_REFRESH_DATA, this.refreshDataHandler);
+    this.$zettoEventEmitter.on('refreshData', this.refreshDataHandler);
+    this.dataBroker = new GuidamiBroker(this.$props);
     this.fetchData();
   },
-
+  beforeDestroy() {
+    this.$zettoEventEmitter.off('refreshData', this.refreshDataHandler);
+  },
   watch: {
     currentPage() {
       this.fetchData();
@@ -51,15 +53,15 @@ export default {
   },
   computed: {
     compPageSize() {
-      if (!this.action) return 0;
+      if (!this.dataBroker) return 0;
       if (this.pageSize === false) return 0;
       return this.pageSize || this.action.config.rowsPerPage || 10;
     },
     tableFields() {
-      if (!this.action) return [];
+      if (!this.dataBroker) return [];
 
       return mergeComponentFields(
-        this.action.getSummaryProperties(),
+        this.dataBroker.getSearchFields(),
         this.fields
       );
     },
@@ -76,23 +78,15 @@ export default {
     async fetchData() {
       this.loading = true;
 
-      const searchParams = {
-        pagination: true,
-        page: this.currentPage,
-        filters: this.formFilters,
-        sort: this.sort,
-      };
-
-      // Pagination settings
-      if (this.pageSize === false) searchParams.pagination = false;
-      else searchParams.pageSize = this.compPageSize;
-
-      // Prop filters
-      // const filters = this.filters ? cloneDeep(this.filters) : {};
-      // if (this.searchField) filters[this.searchField] = this.search;
-
       try {
-        this.items = await lazyPromise(this.action.search(searchParams));
+        this.items = await lazyPromise(
+          this.dataBroker.search(
+            this.formFilters,
+            this.sort,
+            this.currentPage,
+            this.compPageSize
+          )
+        );
         this.$emit('loaded', this.items);
       } catch (e) {
         this.error = 'Errore, impossibile caricaricare i dati!';
@@ -102,26 +96,13 @@ export default {
     },
   },
   render() {
-    // this.search && h(
-    //   'button',
-    //   {
-    //     class: 'btn btn-link',
-    //     on: {
-    //       click: () => {
-    //         this.expanded = !this.expanded;
-    //       },
-    //     },
-    //   },
-    //   [this.$trans('zetto.search.filter')]
-    // ),
-
     return h('div', [
       this.search &&
         h(SearchFilter, {
           props: {
             action: this.action,
             fields: this.searchFields,
-            expanded: this.expanded,
+            expanded: this.showFilters,
             model: this.model,
           },
           on: { search: this.doSearch },

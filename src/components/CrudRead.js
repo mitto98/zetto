@@ -1,32 +1,37 @@
 import { h } from 'vue';
 import { mergeComponentFields } from '../lib/fields';
-import listenOnRoot from '../mixins/listenOnRoot';
 import translatorMixin from '../mixins/translatorMixin';
 import modelMixin, { modelMixinProps } from '../mixins/modelMixin';
-import { EVENT_NAME_REFRESH_DATA } from '../constants/events';
+import GuidamiBroker from '../dataBrokers/GuidamiBroker';
 
 export default {
   name: 'CrudRead',
-  mixins: [listenOnRoot, translatorMixin, modelMixin],
+  mixins: [translatorMixin, modelMixin],
   props: {
     id: { type: String },
-    action: { type: [Object, String], required: true },
-    fields: { type: Object, default: () => ({}) },
+    // action: { type: [Object, String], required: true },
+    fields: { type: Object, default: () => ({}), required: false },
     entity: { type: [Object, String, Number], required: true },
     ...modelMixinProps,
   },
   data: () => ({
     loading: false,
     loadedItem: null,
+    dataBroker: null,
   }),
-  mounted() {
-    this.listenOnRoot(EVENT_NAME_REFRESH_DATA, this.refreshDataHandler);
+  created() {
+    this.$zettoEventEmitter.on('refreshData', this.refreshDataHandler);
+    console.log({ ...this.$props }, { ...this.$attrs });
+    this.dataBroker = new GuidamiBroker({ ...this.$attrs });
     this.fetchData();
+  },
+  beforeDestroy() {
+    this.$zettoEventEmitter.off('refreshData', this.refreshDataHandler);
   },
   computed: {
     tableFields() {
-      if (!this.action) return [];
-      return mergeComponentFields(this.action.properties, this.fields);
+      if (!this.dataBroker) return [];
+      return mergeComponentFields(this.dataBroker.getReadFields(), this.fields);
     },
     item() {
       if (this.entity._isPortofinoEntity) return this.entity;
@@ -40,8 +45,8 @@ export default {
     async fetchData() {
       if (this.entity._isPortofinoEntity) return;
       this.loading = true;
-      this.loadedItem = await this.action.get(this.entity);
-      this.$emit('loaded', entity);
+      this.loadedItem = await this.dataBroker.get(this.entity);
+      this.$emit('loaded', this.entity);
       this.loading = false;
     },
   },
