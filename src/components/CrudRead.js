@@ -1,13 +1,12 @@
 import { h } from 'vue';
 import { mergeComponentFields } from '../lib/fields';
-import listenOnRoot from '../mixins/listenOnRoot';
 import translatorMixin from '../mixins/translatorMixin';
 import modelMixin, { modelMixinProps } from '../mixins/modelMixin';
-import { EVENT_NAME_REFRESH_DATA } from '../constants/events';
+import GuidamiBroker from '../dataBrokers/GuidamiBroker';
 
 export default {
   name: 'CrudRead',
-  mixins: [listenOnRoot, translatorMixin, modelMixin],
+  mixins: [translatorMixin, modelMixin],
   props: {
     id: { type: String },
     action: { type: [Object, String], required: true },
@@ -18,10 +17,15 @@ export default {
   data: () => ({
     loading: false,
     loadedItem: null,
+    dataBroker: null,
   }),
-  mounted() {
-    this.listenOnRoot(EVENT_NAME_REFRESH_DATA, this.refreshDataHandler);
+  created() {
+    this.$zettoEventEmitter.on('refreshData', this.refreshDataHandler);
+    this.dataBroker = new GuidamiBroker({ ...this.$attrs });
     this.fetchData();
+  },
+  beforeDestroy() {
+    this.$zettoEventEmitter.off('refreshData', this.refreshDataHandler);
   },
   computed: {
     tableFields() {
@@ -41,7 +45,7 @@ export default {
       if (this.entity._isPortofinoEntity) return;
       this.loading = true;
       this.loadedItem = await this.action.get(this.entity);
-      this.$emit('loaded', entity);
+      this.$emit('loaded', this.entity);
       this.loading = false;
     },
   },

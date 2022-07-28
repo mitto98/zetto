@@ -28,7 +28,9 @@
   },
   "dependencies": {
     "@manydesigns/portofino": "^1.9.0",
+    "defu": "^6.0.0",
     "lodash": "^4.17",
+    "mitt": "^3.0.0",
     "v-calendar": "next"
   },
   "devDependencies": {
