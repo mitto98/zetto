@@ -34,7 +34,7 @@
     "v-calendar": "next"
   },
   "devDependencies": {
-    "@commitlint/cli": "^15.0.0",
+    "@commitlint/cli": "^17.1.2",
     "@commitlint/config-conventional": "^15.0.0",
     "@nuxt/kit": "^3.0.0-rc.6",
     "@types/lodash": "^4.14.170",
