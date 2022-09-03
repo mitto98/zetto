@@ -11,7 +11,7 @@ export default defineNuxtModule({
     name: 'zetto',
     configKey: 'zetto',
     compatibility: {
-      nuxt: '^3.0.0',
+      nuxt: '^3.0.0-rc.6',
     },
   },
   // Default configuration options for the module
